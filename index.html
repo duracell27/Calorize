@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calorize — Журнал Калорій & Гідратації</title>
+    <title>Calorize — Журнал Калорій, Активності & Гідратації</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -46,7 +46,7 @@
             </div>
             
             <div class="flex items-center space-x-3">
-                <a href="https://docs.google.com/spreadsheets/d/1z4NmfD-wDZpb61-yttwcuP2NrDNVmRIygISzlxKgngs/edit" target="_blank" class="hidden sm:flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-800 text-slate-200 px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-semibold transition">
+                <a href="https://docs.google.com/spreadsheets/d/13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM/edit" target="_blank" class="hidden sm:flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-800 text-slate-200 px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-semibold transition">
                     <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i>
                     <span>Відкрити Таблицю</span>
                 </a>
@@ -91,95 +91,125 @@
             </div>
         </div>
 
-        <!-- Metric Cards Grid (6 cards) -->
-        <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+        <!-- Metric Cards Grid (8 Cards) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3.5">
             <!-- 1. Calories In -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
                 <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
                     <span>Спожито</span>
                     <i data-lucide="utensils" class="w-4 h-4 text-emerald-400"></i>
                 </div>
                 <div>
-                    <div class="text-2xl font-bold text-slate-100"><span id="calVal">0</span> <span class="text-xs font-normal text-slate-400">/ 2450</span></div>
-                    <div id="calStatus" class="text-xs text-slate-400 font-medium mt-0.5">0% норми</div>
+                    <div class="text-xl font-bold text-slate-100"><span id="calVal">3520</span> <span class="text-[10px] font-normal text-slate-400">/ 2450</span></div>
+                    <div id="calStatus" class="text-[11px] text-amber-400 font-medium mt-0.5">143.7%</div>
                 </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="calBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="calBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
                 </div>
             </div>
 
-            <!-- 2. Calories Burned & Net Balance -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+            <!-- 2. Garmin Activity -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
                 <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
-                    <span>Garmin / Баланс</span>
+                    <span>Garmin</span>
                     <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
                 </div>
                 <div>
-                    <div class="text-2xl font-bold text-orange-400"><span id="burnVal">0</span> <span class="text-xs font-normal text-slate-400">ккал</span></div>
-                    <div id="netStatus" class="text-xs text-emerald-400 font-medium mt-0.5">Чисті: 0 ккал</div>
+                    <div class="text-xl font-bold text-orange-400"><span id="burnVal">725</span> <span class="text-[10px] font-normal text-slate-400">/ 700</span></div>
+                    <div id="burnStatus" class="text-[11px] text-emerald-400 font-medium mt-0.5">103.6% норми</div>
                 </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="burnBar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="burnBar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
                 </div>
             </div>
 
-            <!-- 3. Protein -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+            <!-- 3. Caloric Balance -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Баланс</span>
+                    <i data-lucide="scale" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div>
+                    <div class="text-xl font-bold text-slate-100"><span id="netVal">2795</span> <span class="text-[10px] font-normal text-slate-400">ккал</span></div>
+                    <div id="netStatus" class="text-[11px] text-amber-400 font-medium mt-0.5">+345 ккал (профіцит)</div>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="netBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <!-- 4. Protein -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
                 <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
                     <span>Білки</span>
                     <i data-lucide="beef" class="w-4 h-4 text-blue-400"></i>
                 </div>
                 <div>
-                    <div class="text-2xl font-bold text-slate-100"><span id="protVal">0</span> <span class="text-xs font-normal text-slate-400">/ 137г</span></div>
-                    <div id="protStatus" class="text-xs text-blue-400 font-medium mt-0.5">0% норми</div>
+                    <div class="text-xl font-bold text-slate-100"><span id="protVal">99.2</span> <span class="text-[10px] font-normal text-slate-400">/ 137г</span></div>
+                    <div id="protStatus" class="text-[11px] text-blue-400 font-medium mt-0.5">72.4% норми</div>
                 </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="protBar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="protBar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 72.4%"></div>
                 </div>
             </div>
 
-            <!-- 4. Fat -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+            <!-- 5. Fat -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
                 <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
                     <span>Жири</span>
                     <i data-lucide="droplet" class="w-4 h-4 text-amber-400"></i>
                 </div>
                 <div>
-                    <div class="text-2xl font-bold text-slate-100"><span id="fatVal">0</span> <span class="text-xs font-normal text-slate-400">/ 76г</span></div>
-                    <div id="fatStatus" class="text-xs text-amber-400 font-medium mt-0.5">0% норми</div>
+                    <div class="text-xl font-bold text-slate-100"><span id="fatVal">163.8</span> <span class="text-[10px] font-normal text-slate-400">/ 76г</span></div>
+                    <div id="fatStatus" class="text-[11px] text-amber-400 font-medium mt-0.5">215.5% (перевищено)</div>
                 </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="fatBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="fatBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
                 </div>
             </div>
 
-            <!-- 5. Carbs -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+            <!-- 6. Carbs -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
                 <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
                     <span>Вуглеводи</span>
                     <i data-lucide="wheat" class="w-4 h-4 text-purple-400"></i>
                 </div>
                 <div>
-                    <div class="text-2xl font-bold text-slate-100"><span id="carbVal">0</span> <span class="text-xs font-normal text-slate-400">/ 305г</span></div>
-                    <div id="carbStatus" class="text-xs text-purple-400 font-medium mt-0.5">0% норми</div>
+                    <div class="text-xl font-bold text-slate-100"><span id="carbVal">379.1</span> <span class="text-[10px] font-normal text-slate-400">/ 305г</span></div>
+                    <div id="carbStatus" class="text-[11px] text-purple-400 font-medium mt-0.5">124.3% норми</div>
                 </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="carbBar" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="carbBar" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
                 </div>
             </div>
 
-            <!-- 6. Effective Hydration -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+            <!-- 7. Fiber (Клітковина) -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Клітковина</span>
+                    <i data-lucide="sprout" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div>
+                    <div class="text-xl font-bold text-slate-100"><span id="fiberVal">26.5</span> <span class="text-[10px] font-normal text-slate-400">/ 30г</span></div>
+                    <div id="fiberStatus" class="text-[11px] text-emerald-400 font-medium mt-0.5">88.3% (залиш. 3.5г)</div>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="fiberBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 88.3%"></div>
+                </div>
+            </div>
+
+            <!-- 8. Effective Hydration -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
                 <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
                     <span>Гідратація</span>
                     <i data-lucide="glass-water" class="w-4 h-4 text-cyan-400"></i>
                 </div>
                 <div>
-                    <div class="text-2xl font-bold text-slate-100"><span id="hydraVal">0</span> <span class="text-xs font-normal text-slate-400">/ 2650мл</span></div>
-                    <div id="hydraStatus" class="text-xs text-cyan-400 font-medium mt-0.5">0% норми</div>
+                    <div class="text-xl font-bold text-slate-100"><span id="hydraVal">1845</span> <span class="text-[10px] font-normal text-slate-400">/ 2650мл</span></div>
+                    <div id="hydraStatus" class="text-[11px] text-cyan-400 font-medium mt-0.5">69.6% (ефективна)</div>
                 </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="hydraBar" class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="hydraBar" class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: 69.6%"></div>
                 </div>
             </div>
         </div>
@@ -220,18 +250,18 @@
             </div>
         </div>
 
-        <!-- Categorized Meal Sections (6 blocks) -->
+        <!-- Categorized Meal Sections (6 blocks - NO activity in meals) -->
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
                     <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
-                    Прийоми їжі та активність за <span id="selectedDateTitle" class="text-emerald-400">13.08.2026</span>
+                    Прийоми їжі за <span id="selectedDateTitle" class="text-emerald-400">13.08.2026</span>
                 </h2>
                 <div class="text-xs text-slate-400 flex items-center gap-3">
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Вода (100%)</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Кава/Чай (80%)</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Пиво (60%)</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span> Активність</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Їжа</span>
                 </div>
             </div>
 
@@ -242,8 +272,8 @@
 
     <!-- App Logic & Google Sheets Real-Time Fetcher -->
     <script>
-        const SPREADSHEET_ID = '1z4NmfD-wDZpb61-yttwcuP2NrDNVmRIygISzlxKgngs';
-        const NORMS = { cal: 2450, p: 137, f: 76, c: 305, water: 2650 };
+        const SPREADSHEET_ID = '13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM';
+        const NORMS = { cal: 2450, burn: 700, p: 137, f: 76, c: 305, fiber: 30, water: 2650 };
         let currentDate = "2026-08-13";
 
         function getHydrationFactor(name, type) {
@@ -258,36 +288,35 @@
             return 0.0;
         }
 
-        // Database object (will be populated strictly from Google Sheets without duplicates)
         let database = {
             "2026-08-13": {
                 weight: 76.2,
                 burned: 725,
                 meals: {
                     "Сніданок": [
-                        { name: "Кава (чорна, без цукру)", type: "coffee", weight: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, volume: 200 }
+                        { name: "Кава (чорна, без цукру)", type: "coffee", weight: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, fiber: 0, volume: 200 }
                     ],
                     "Перекус 1": [
-                        { name: "Чизкейк класичний", type: "food", weight: "200 г", cal: 642, p: 11, f: 45, c: 51, volume: 0 },
-                        { name: "Торт Медовик", type: "food", weight: "100 г", cal: 410, p: 6, f: 20, c: 52, volume: 0 }
+                        { name: "Чизкейк класичний", type: "food", weight: "200 г", cal: 642, p: 11, f: 45, c: 51, fiber: 0.5, volume: 0 },
+                        { name: "Торт Медовик", type: "food", weight: "100 г", cal: 410, p: 6, f: 20, c: 52, fiber: 0.5, volume: 0 }
                     ],
                     "Обід": [
-                        { name: "Буріто велике", type: "food", weight: "500 г", cal: 1050, p: 45, f: 40, c: 125, volume: 0 }
+                        { name: "Буріто велике", type: "food", weight: "500 г", cal: 1050, p: 45, f: 40, c: 125, fiber: 10.0, volume: 0 }
                     ],
                     "Перекус 2": [
-                        { name: "Кава", type: "coffee", weight: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, volume: 250 },
-                        { name: "Пепсі", type: "soda", weight: "100 мл", cal: 43, p: 0, f: 0, c: 10.7, volume: 100 },
-                        { name: "Чиста питна вода", type: "water", weight: "600 мл", cal: 0, p: 0, f: 0, c: 0, volume: 600 }
+                        { name: "Кава", type: "coffee", weight: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, fiber: 0, volume: 250 },
+                        { name: "Пепсі", type: "soda", weight: "100 мл", cal: 43, p: 0, f: 0, c: 10.7, fiber: 0, volume: 100 },
+                        { name: "Чиста питна вода", type: "water", weight: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, volume: 600 }
                     ],
                     "Вечеря": [
-                        { name: "Салат (помідор, огірок, цибуля, йогурт)", type: "food", weight: "250 г", cal: 90, p: 4.0, f: 3.0, c: 11.0, volume: 0 },
-                        { name: "Хліб (3 великі скибки)", type: "food", weight: "135 г", cal: 340, p: 11.0, f: 2.0, c: 68.0, volume: 0 },
-                        { name: "Чиста питна вода (вечір)", type: "water", weight: "500 мл", cal: 0, p: 0, f: 0, c: 0, volume: 500 }
+                        { name: "Салат (помідор, огірок, цибуля, йогурт)", type: "food", weight: "250 г", cal: 90, p: 4.0, f: 3.0, c: 11.0, fiber: 4.5, volume: 0 },
+                        { name: "Хліб (3 великі скибки)", type: "food", weight: "135 г", cal: 340, p: 11.0, f: 2.0, c: 68.0, fiber: 4.0, volume: 0 },
+                        { name: "Чиста питна вода (вечір)", type: "water", weight: "500 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, volume: 500 }
                     ],
                     "Перекус 3": [
-                        { name: "Пиво Опілля", type: "alcohol", weight: "500 мл", cal: 210, p: 2.5, f: 0, c: 17.5, volume: 500 },
-                        { name: "Горішки Своя Лінія", type: "food", weight: "60 г", cal: 360, p: 15.0, f: 30.0, c: 7.5, volume: 0 },
-                        { name: "Чіпси Chipsters", type: "food", weight: "70 г", cal: 370, p: 4.2, f: 23.8, c: 35.7, volume: 0 }
+                        { name: "Пиво Опілля", type: "alcohol", weight: "500 мл", cal: 210, p: 2.5, f: 0, c: 17.5, fiber: 0, volume: 500 },
+                        { name: "Горішки Своя Лінія", type: "food", weight: "60 г", cal: 360, p: 15.0, f: 30.0, c: 7.5, fiber: 4.5, volume: 0 },
+                        { name: "Чіпси Chipsters", type: "food", weight: "70 г", cal: 370, p: 4.2, f: 23.8, c: 35.7, fiber: 2.5, volume: 0 }
                     ]
                 }
             }
@@ -323,7 +352,7 @@
             
             document.getElementById('headerWeightDisplay').innerText = (dayData.weight || 76.2) + " кг";
 
-            let totCal = 0, totP = 0, totF = 0, totC = 0, effectiveHydration = 0;
+            let totCal = 0, totP = 0, totF = 0, totC = 0, totFiber = 0, effectiveHydration = 0;
             const sections = ["Сніданок", "Перекус 1", "Обід", "Перекус 2", "Вечеря", "Перекус 3"];
             
             let sectionsHtml = "";
@@ -342,6 +371,7 @@
                         totP += item.p || 0;
                         totF += item.f || 0;
                         totC += item.c || 0;
+                        totFiber += item.fiber || 0;
                         secCal += item.cal || 0;
 
                         const factor = getHydrationFactor(item.name, item.type);
@@ -366,7 +396,7 @@
                                 </div>
                                 <div class="text-right">
                                     <div class="font-bold text-emerald-400">${item.cal} ккал</div>
-                                    <div class="text-xs text-slate-400">Б:${item.p}г • Ж:${item.f}г • В:${item.c}г</div>
+                                    <div class="text-xs text-slate-400">Б:${item.p}г • Ж:${item.f}г • В:${item.c}г • Кліт:${item.fiber || 0}г</div>
                                 </div>
                             </div>
                         `;
@@ -391,31 +421,57 @@
 
             document.getElementById('mealSectionsContainer').innerHTML = sectionsHtml;
 
-            // Update Cards
+            // 1. Calories In
             document.getElementById('calVal').innerText = Math.round(totCal);
             const calPct = ((totCal / NORMS.cal) * 100).toFixed(1);
             document.getElementById('calStatus').innerText = `${calPct}% норми`;
             document.getElementById('calBar').style.width = `${Math.min(100, calPct)}%`;
 
+            // 2. Garmin Activity
             const burned = dayData.burned || 0;
-            document.getElementById('burnVal').innerText = burned;
-            document.getElementById('netStatus').innerText = `Чисті: ${Math.round(totCal - burned)} ккал`;
+            document.getElementById('burnVal').innerText = Math.round(burned);
+            const burnPct = ((burned / NORMS.burn) * 100).toFixed(1);
+            document.getElementById('burnStatus').innerText = `${burnPct}% норми`;
+            document.getElementById('burnBar').style.width = `${Math.min(100, burnPct)}%`;
 
+            // 3. Caloric Balance (Net)
+            const netCal = Math.round(totCal - burned);
+            document.getElementById('netVal').innerText = netCal;
+            const netDiff = netCal - NORMS.cal;
+            if (netDiff > 0) {
+                document.getElementById('netStatus').innerText = `+${netDiff} ккал (профіцит)`;
+                document.getElementById('netStatus').className = "text-[11px] text-amber-400 font-medium mt-0.5";
+            } else {
+                document.getElementById('netStatus').innerText = `${netDiff} ккал (дефіцит)`;
+                document.getElementById('netStatus').className = "text-[11px] text-emerald-400 font-medium mt-0.5";
+            }
+            document.getElementById('netBar').style.width = `${Math.min(100, Math.max(0, (netCal / NORMS.cal) * 100))}%`;
+
+            // 4. Protein
             document.getElementById('protVal').innerText = totP.toFixed(1);
             const protPct = ((totP / NORMS.p) * 100).toFixed(1);
             document.getElementById('protStatus').innerText = `${protPct}% норми`;
             document.getElementById('protBar').style.width = `${Math.min(100, protPct)}%`;
 
+            // 5. Fat
             document.getElementById('fatVal').innerText = totF.toFixed(1);
             const fatPct = ((totF / NORMS.f) * 100).toFixed(1);
             document.getElementById('fatStatus').innerText = `${fatPct}% (${totF > NORMS.f ? 'перевищено' : 'норми'})`;
             document.getElementById('fatBar').style.width = `${Math.min(100, fatPct)}%`;
 
+            // 6. Carbs
             document.getElementById('carbVal').innerText = totC.toFixed(1);
             const carbPct = ((totC / NORMS.c) * 100).toFixed(1);
             document.getElementById('carbStatus').innerText = `${carbPct}% норми`;
             document.getElementById('carbBar').style.width = `${Math.min(100, carbPct)}%`;
 
+            // 7. Fiber (Клітковина)
+            document.getElementById('fiberVal').innerText = totFiber.toFixed(1);
+            const fiberPct = ((totFiber / NORMS.fiber) * 100).toFixed(1);
+            document.getElementById('fiberStatus').innerText = `${fiberPct}% (залиш. ${Math.max(0, NORMS.fiber - totFiber).toFixed(1)}г)`;
+            document.getElementById('fiberBar').style.width = `${Math.min(100, fiberPct)}%`;
+
+            // 8. Hydration
             document.getElementById('hydraVal').innerText = Math.round(effectiveHydration);
             const hydraPct = ((effectiveHydration / NORMS.water) * 100).toFixed(1);
             document.getElementById('hydraStatus').innerText = `${hydraPct}% норми`;
@@ -517,12 +573,12 @@
             });
         }
 
-        // Live Google Sheets Parser (GViz API) with Deduplication Logic
+        // Live Google Sheets Parser (GViz API) with safe column indexing & activity separation
         async function fetchGoogleSheetsLive() {
             const statusEl = document.getElementById('syncStatus');
             const syncIcon = document.getElementById('syncIcon');
             syncIcon.classList.add('animate-spin');
-            statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Завантаження з Google Таблиці...`;
+            statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Оновлення з таблиці...`;
 
             try {
                 const gvizUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -548,7 +604,6 @@
         }
 
         function parseGoogleSheetRows(rows) {
-            // Rebuild database cleanly from fetched Google Sheet rows to prevent ANY duplication!
             const newDatabase = {};
 
             rows.forEach(r => {
@@ -558,7 +613,6 @@
                 let dateVal = c[0].f || c[0].v;
                 let dateStr = String(dateVal).trim();
 
-                // Format Date(YYYY,M,D)
                 if (dateStr.includes('Date(')) {
                     const parts = dateStr.match(/\d+/g);
                     if (parts && parts.length >= 3) {
@@ -582,16 +636,38 @@
                 const meal = (c[1] && (c[1].f || c[1].v)) ? String(c[1].f || c[1].v).trim() : "Перекус 1";
                 const name = (c[2] && (c[2].f || c[2].v)) ? String(c[2].f || c[2].v).trim() : "";
                 const weight = (c[3] && (c[3].f || c[3].v)) ? String(c[3].f || c[3].v).trim() : "";
-                const cal = (c[4] && c[4].v !== null) ? Number(c[4].v) || 0 : 0;
-                const p = (c[5] && c[5].v !== null) ? Number(c[5].v) || 0 : 0;
-                const f = (c[6] && c[6].v !== null) ? Number(c[6].v) || 0 : 0;
-                const carbs = (c[7] && c[7].v !== null) ? Number(c[7].v) || 0 : 0;
-                const burned = (c[8] && c[8].v !== null) ? Number(c[8].v) || 0 : 0;
-                const water = (c[9] && c[9].v !== null) ? Number(c[9].v) || 0 : 0;
-                const bodyWeight = (c[11] && c[11].v !== null) ? Number(c[11].v) : null;
+                
+                // Helper to parse numbers safely (skip invalid huge serial dates like 46257)
+                function safeNum(cellObj, maxLimit = 10000) {
+                    if (!cellObj || cellObj.v === null || cellObj.v === undefined) return 0;
+                    let v = Number(cellObj.v);
+                    if (isNaN(v)) {
+                        v = parseFloat(String(cellObj.f || cellObj.v).replace(',', '.'));
+                    }
+                    if (isNaN(v) || v > maxLimit || v < -1000) return 0;
+                    return v;
+                }
 
-                if (bodyWeight) newDatabase[dateStr].weight = bodyWeight;
-                if (burned) newDatabase[dateStr].burned += burned;
+                const cal = safeNum(c[4], 5000);
+                const p = safeNum(c[5], 300);
+                const f = safeNum(c[6], 300); // Protected against date serials!
+                const carbs = safeNum(c[7], 1000);
+                const fiber = safeNum(c[8], 200);
+                const burned = safeNum(c[9], 10000);
+                const water = safeNum(c[10], 10000);
+                const bodyWeight = safeNum(c[12], 300);
+
+                if (bodyWeight > 30) newDatabase[dateStr].weight = bodyWeight;
+                if (burned > 0) newDatabase[dateStr].burned += burned;
+
+                // Check if row is activity/Garmin
+                const isActivity = meal.toLowerCase().includes("активн") || name.toLowerCase().includes("активн") || name.toLowerCase().includes("garmin");
+
+                if (isActivity) {
+                    if (cal > 0 && burned === 0) newDatabase[dateStr].burned += cal;
+                    // DO NOT add activity to meal sections!
+                    return;
+                }
 
                 if (name) {
                     let targetMeal = "Перекус 1";
@@ -624,6 +700,7 @@
                         p: p,
                         f: f,
                         c: carbs,
+                        fiber: fiber,
                         volume: water
                     });
                 }
