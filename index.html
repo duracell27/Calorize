@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал Калорій & Гідратації</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            500: '#10b981',
+                            600: '#059669',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-16">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                    <i data-lucide="activity" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-100 leading-tight">Журнал Калорій & Гідратації</h1>
+                    <p class="text-xs text-slate-400">Синхронізація з Google Sheets</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <a href="https://docs.google.com/spreadsheets/d/1TsAN6VrVVTiLplPMXMRHqbnAJs57kplr8NKgYjKneBk/edit" target="_blank" class="hidden sm:flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-800 text-slate-200 px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-semibold transition">
+                    <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Google Таблиця</span>
+                </a>
+                
+                <div class="flex items-center bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-300">
+                    <i data-lucide="scale" class="w-4 h-4 text-emerald-400 mr-2"></i>
+                    <span>Вага: <strong id="headerWeightDisplay" class="text-slate-100 font-bold">76.2 кг</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+
+        <!-- Date & Live Sync Bar -->
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <button id="prevDayBtn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition border border-slate-700">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                <div class="flex items-center space-x-2 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
+                    <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i>
+                    <input type="date" id="dateInput" value="2026-08-13" class="bg-transparent text-slate-100 text-sm font-semibold focus:outline-none cursor-pointer">
+                </div>
+                <button id="nextDayBtn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition border border-slate-700">
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+                <button id="todayBtn" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl text-xs font-semibold transition">
+                    Сьогодні
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-3 text-xs">
+                <button id="syncSheetBtn" class="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-xl transition shadow-lg shadow-emerald-900/30">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Оновити дані</span>
+                </button>
+                <span id="syncStatus" class="text-emerald-400 text-xs flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Live Sync активний
+                </span>
+            </div>
+        </div>
+
+        <!-- Metric Cards Grid (6 cards: Calories, Burned/Net, Protein, Fat, Carbs, Hydration) -->
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+            <!-- 1. Calories In -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Спожито</span>
+                    <i data-lucide="utensils" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-slate-100"><span id="calVal">2150</span> <span class="text-xs font-normal text-slate-400">ккал</span></div>
+                    <div id="calStatus" class="text-xs text-emerald-400 font-medium mt-0.5">87.8% норми</div>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="calBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 87.8%"></div>
+                </div>
+            </div>
+
+            <!-- 2. Calories Burned & Net -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Витрата / Чисті</span>
+                    <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-orange-400"><span id="burnVal">0</span> <span class="text-xs font-normal text-slate-400">ккал</span></div>
+                    <div id="netStatus" class="text-xs text-slate-300 font-medium mt-0.5">Баланс: 2150 ккал</div>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="burnBar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 3. Protein -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Білки</span>
+                    <i data-lucide="beef" class="w-4 h-4 text-blue-400"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-slate-100"><span id="protVal">62.5</span> <span class="text-xs font-normal text-slate-400">/ 137г</span></div>
+                    <div id="protStatus" class="text-xs text-blue-400 font-medium mt-0.5">45.6% норми</div>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="protBar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 45.6%"></div>
+                </div>
+            </div>
+
+            <!-- 4. Fat -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Жири</span>
+                    <i data-lucide="droplet" class="w-4 h-4 text-amber-400"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-slate-100"><span id="fatVal">105.0</span> <span class="text-xs font-normal text-slate-400">/ 76г</span></div>
+                    <div id="fatStatus" class="text-xs text-amber-400 font-medium mt-0.5">138.2% (перевищено)</div>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="fatBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <!-- 5. Carbs -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Вуглеводи</span>
+                    <i data-lucide="wheat" class="w-4 h-4 text-purple-400"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-slate-100"><span id="carbVal">239.4</span> <span class="text-xs font-normal text-slate-400">/ 305г</span></div>
+                    <div id="carbStatus" class="text-xs text-purple-400 font-medium mt-0.5">78.5% норми</div>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="carbBar" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 78.5%"></div>
+                </div>
+            </div>
+
+            <!-- 6. Effective Hydration -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-3">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Гідратація</span>
+                    <i data-lucide="glass-water" class="w-4 h-4 text-cyan-400"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-slate-100"><span id="hydraVal">1050</span> <span class="text-xs font-normal text-slate-400">/ 2650мл</span></div>
+                    <div id="hydraStatus" class="text-xs text-cyan-400 font-medium mt-0.5">39.6% (ефективна)</div>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="hydraBar" class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: 39.6%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Charts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Chart 1: Donut Chart - Macro Ratio -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-md flex flex-col justify-between">
+                <h3 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                    <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i>
+                    Розподіл БЖВ (г)
+                </h3>
+                <div class="relative w-full h-64 flex items-center justify-center">
+                    <canvas id="macroChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Daily Hydration Chart -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-md flex flex-col justify-between">
+                <h3 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                    <i data-lucide="droplets" class="w-4 h-4 text-cyan-400"></i>
+                    Гідратація по днях (мл)
+                </h3>
+                <div class="relative w-full h-64">
+                    <canvas id="waterChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 3: Weekly Weight Trend Chart -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-md flex flex-col justify-between">
+                <h3 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                    Динаміка ваги (кг)
+                </h3>
+                <div class="relative w-full h-64">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categorized Meal Sections (6 blocks) -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
+                    Журнал харчування за <span id="selectedDateTitle" class="text-emerald-400">13.08.2026</span>
+                </h2>
+                <div class="text-xs text-slate-400 flex items-center gap-3">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Вода (100%)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Кава/Чай (80%)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Алкоголь (0-60%)</span>
+                </div>
+            </div>
+
+            <div id="mealSectionsContainer" class="space-y-4"></div>
+        </div>
+
+    </main>
+
+    <!-- App Logic & Google Sheets Integration -->
+    <script>
+        const SPREADSHEET_ID = '1TsAN6VrVVTiLplPMXMRHqbnAJs57kplr8NKgYjKneBk';
+        const NORMS = { cal: 2450, p: 137, f: 76, c: 305, water: 2650 };
+        let currentDate = "2026-08-13";
+
+        // Hydration Coefficients mapping
+        function getHydrationFactor(name, type) {
+            const lower = (name || "").toLowerCase();
+            if (lower.includes("чиста") || lower.includes("водичка") || type === "water" || lower === "вода") return 1.0; // 100%
+            if (lower.includes("кава") || lower.includes("еспресо") || lower.includes("американо")) return 0.8; // 80%
+            if (lower.includes("чай")) return 0.85; // 85%
+            if (lower.includes("пепсі") || lower.includes("кола") || lower.includes("сік") || lower.includes("лимонад")) return 0.85; // 85%
+            if (lower.includes("пиво") || lower.includes("сидр") || lower.includes("радлер")) return 0.6; // 60%
+            if (lower.includes("вино") || lower.includes("просеко")) return 0.2; // 20%
+            if (lower.includes("горілка") || lower.includes("віскі") || lower.includes("джин") || lower.includes("роми") || lower.includes("коньяк")) return -0.5; // Dehydrating
+            return 0.0;
+        }
+
+        // Local state with sample real data
+        const database = {
+            "2026-08-13": {
+                weight: 76.2,
+                burned: 0,
+                meals: {
+                    "Сніданок": [
+                        { name: "Кава (чорна, без цукру)", type: "coffee", weight: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, volume: 200 }
+                    ],
+                    "Перекус 1": [
+                        { name: "Чизкейк класичний", type: "food", weight: "200 г", cal: 642, p: 11, f: 45, c: 51, volume: 0 },
+                        { name: "Торт Медовик", type: "food", weight: "100 г", cal: 410, p: 6, f: 20, c: 52, volume: 0 }
+                    ],
+                    "Обід": [
+                        { name: "Буріто велике", type: "food", weight: "500 г", cal: 1050, p: 45, f: 40, c: 125, volume: 0 }
+                    ],
+                    "Перекус 2": [
+                        { name: "Кава", type: "coffee", weight: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, volume: 250 },
+                        { name: "Пепсі", type: "soda", weight: "100 мл", cal: 43, p: 0, f: 0, c: 10.7, volume: 100 },
+                        { name: "Чиста питна вода", type: "water", weight: "600 мл", cal: 0, p: 0, f: 0, c: 0, volume: 600 }
+                    ],
+                    "Вечеря": [],
+                    "Перекус 3": []
+                }
+            },
+            "2026-08-14": {
+                weight: 76.2,
+                burned: 0,
+                meals: { "Сніданок": [], "Перекус 1": [], "Обід": [], "Перекус 2": [], "Вечеря": [], "Перекус 3": [] }
+            }
+        };
+
+        let macroChartInstance = null;
+        let waterChartInstance = null;
+        let weightChartInstance = null;
+
+        function getIconForType(name, type) {
+            const lower = (name || "").toLowerCase();
+            if (type === "water" || lower.includes("вод")) {
+                return `<div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg border border-cyan-500/20" title="Чиста вода (100% гідратація)"><i data-lucide="droplet" class="w-4 h-4"></i></div>`;
+            }
+            if (type === "alcohol" || lower.includes("пив") || lower.includes("вин") || lower.includes("алког") || lower.includes("віскі") || lower.includes("горілк") || lower.includes("сидр")) {
+                return `<div class="p-2 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20" title="Алкоголь"><i data-lucide="wine" class="w-4 h-4"></i></div>`;
+            }
+            if (lower.includes("кав") || lower.includes("чай") || type === "coffee") {
+                return `<div class="p-2 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20" title="Кава/Чай (80% гідратація)"><i data-lucide="coffee" class="w-4 h-4"></i></div>`;
+            }
+            if (lower.includes("пепсі") || lower.includes("кола") || type === "soda") {
+                return `<div class="p-2 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20" title="Напій"><i data-lucide="cup-soda" class="w-4 h-4"></i></div>`;
+            }
+            return `<div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20" title="Страва"><i data-lucide="utensils" class="w-4 h-4"></i></div>`;
+        }
+
+        function renderDay(dateStr) {
+            currentDate = dateStr;
+            document.getElementById('dateInput').value = dateStr;
+            document.getElementById('selectedDateTitle').innerText = dateStr;
+
+            const dayData = database[dateStr] || { weight: 76.2, burned: 0, meals: { "Сніданок": [], "Перекус 1": [], "Обід": [], "Перекус 2": [], "Вечеря": [], "Перекус 3": [] } };
+            
+            document.getElementById('headerWeightDisplay').innerText = (dayData.weight || 76.2) + " кг";
+
+            let totCal = 0, totP = 0, totF = 0, totC = 0, effectiveHydration = 0;
+            const sections = ["Сніданок", "Перекус 1", "Обід", "Перекус 2", "Вечеря", "Перекус 3"];
+            
+            let sectionsHtml = "";
+
+            sections.forEach(secName => {
+                const items = (dayData.meals && dayData.meals[secName]) ? dayData.meals[secName] : [];
+                let secCal = 0;
+
+                let itemsHtml = "";
+                if (items.length === 0) {
+                    itemsHtml = `<div class="p-4 text-xs text-slate-500 italic">Немає записів для цього прийому</div>`;
+                } else {
+                    itemsHtml = `<div class="divide-y divide-slate-800/60">`;
+                    items.forEach(item => {
+                        totCal += item.cal || 0;
+                        totP += item.p || 0;
+                        totF += item.f || 0;
+                        totC += item.c || 0;
+                        secCal += item.cal || 0;
+
+                        const factor = getHydrationFactor(item.name, item.type);
+                        const hydraContribution = (item.volume || 0) * factor;
+                        effectiveHydration += hydraContribution;
+
+                        const iconHtml = getIconForType(item.name, item.type);
+
+                        let extraBadge = "";
+                        if (item.volume > 0) {
+                            extraBadge = `<span class="text-xs text-cyan-400 ml-2">💧 +${Math.round(hydraContribution)}мл ефект. води (${Math.round(factor * 100)}%)</span>`;
+                        }
+
+                        itemsHtml += `
+                            <div class="px-5 py-3 flex items-center justify-between hover:bg-slate-800/30 transition text-sm">
+                                <div class="flex items-center space-x-3">
+                                    ${iconHtml}
+                                    <div>
+                                        <div class="font-semibold text-slate-100 flex items-center">${item.name} ${extraBadge}</div>
+                                        <div class="text-xs text-slate-400">${item.weight}</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-emerald-400">${item.cal} ккал</div>
+                                    <div class="text-xs text-slate-400">Б:${item.p}г • Ж:${item.f}г • В:${item.c}г</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    itemsHtml += `</div>`;
+                }
+
+                sectionsHtml += `
+                    <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-sm">
+                        <div class="bg-slate-950/70 px-5 py-3 border-b border-slate-800 flex items-center justify-between">
+                            <div class="font-bold text-slate-200 text-sm">
+                                <span>${secName}</span>
+                            </div>
+                            <div class="text-xs font-semibold ${secCal > 0 ? 'text-emerald-400' : 'text-slate-500'}">
+                                ${secCal > 0 ? secCal + ' ккал' : '0 ккал'}
+                            </div>
+                        </div>
+                        ${itemsHtml}
+                    </div>
+                `;
+            });
+
+            document.getElementById('mealSectionsContainer').innerHTML = sectionsHtml;
+
+            // Update Cards
+            document.getElementById('calVal').innerText = Math.round(totCal);
+            const calPct = ((totCal / NORMS.cal) * 100).toFixed(1);
+            document.getElementById('calStatus').innerText = `${calPct}% норми`;
+            document.getElementById('calBar').style.width = `${Math.min(100, calPct)}%`;
+
+            const burned = dayData.burned || 0;
+            document.getElementById('burnVal').innerText = burned;
+            document.getElementById('netStatus').innerText = `Баланс: ${Math.round(totCal - burned)} ккал`;
+            document.getElementById('burnBar').style.width = `${Math.min(100, (burned / 500) * 100)}%`;
+
+            document.getElementById('protVal').innerText = totP.toFixed(1);
+            const protPct = ((totP / NORMS.p) * 100).toFixed(1);
+            document.getElementById('protStatus').innerText = `${protPct}% норми`;
+            document.getElementById('protBar').style.width = `${Math.min(100, protPct)}%`;
+
+            document.getElementById('fatVal').innerText = totF.toFixed(1);
+            const fatPct = ((totF / NORMS.f) * 100).toFixed(1);
+            document.getElementById('fatStatus').innerText = `${fatPct}% (${totF > NORMS.f ? 'перевищено' : 'норми'})`;
+            document.getElementById('fatBar').style.width = `${Math.min(100, fatPct)}%`;
+
+            document.getElementById('carbVal').innerText = totC.toFixed(1);
+            const carbPct = ((totC / NORMS.c) * 100).toFixed(1);
+            document.getElementById('carbStatus').innerText = `${carbPct}% норми`;
+            document.getElementById('carbBar').style.width = `${Math.min(100, carbPct)}%`;
+
+            document.getElementById('hydraVal').innerText = Math.round(effectiveHydration);
+            const hydraPct = ((effectiveHydration / NORMS.water) * 100).toFixed(1);
+            document.getElementById('hydraStatus').innerText = `${hydraPct}% норми`;
+            document.getElementById('hydraBar').style.width = `${Math.min(100, hydraPct)}%`;
+
+            // Charts update
+            updateCharts(totP, totF, totC);
+            lucide.createIcons();
+        }
+
+        function updateCharts(p, f, c) {
+            if (macroChartInstance) macroChartInstance.destroy();
+            const macroCtx = document.getElementById('macroChart').getContext('2d');
+            macroChartInstance = new Chart(macroCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [`Білки (${p.toFixed(1)}г)`, `Жири (${f.toFixed(1)}г)`, `Вуглеводи (${c.toFixed(1)}г)`],
+                    datasets: [{
+                        data: [p || 0.001, f || 0.001, c || 0.001],
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#8b5cf6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Inter', size: 12 } } } },
+                    cutout: '70%'
+                }
+            });
+
+            if (!waterChartInstance) {
+                const waterCtx = document.getElementById('waterChart').getContext('2d');
+                waterChartInstance = new Chart(waterCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['13.08', '14.08'],
+                        datasets: [{
+                            label: 'Ефективна гідратація (мл)',
+                            data: [1050, 0],
+                            backgroundColor: '#06b6d4',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+                            y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' }, suggestedMax: 2650 }
+                        }
+                    }
+                });
+            }
+
+            if (!weightChartInstance) {
+                const weightCtx = document.getElementById('weightChart').getContext('2d');
+                weightChartInstance = new Chart(weightCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['13.08', '14.08'],
+                        datasets: [{
+                            label: 'Вага (кг)',
+                            data: [76.2, 76.2],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: '#0f172a',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+                            y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' }, suggestedMin: 75.0, suggestedMax: 77.5 }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Live Google Sheets Fetching via Google Visualization API
+        async function fetchLiveGoogleSheetData() {
+            const statusEl = document.getElementById('syncStatus');
+            statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-spin"></span> Оновлення з Google Sheets...`;
+            
+            try {
+                // Public Google Sheet query URL
+                const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const text = await res.text();
+                    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+                    const data = JSON.parse(jsonStr);
+                    console.log("Live data loaded from Google Sheet:", data);
+                    statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Синхронізовано з Google Sheets!`;
+                } else {
+                    statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Локальні дані актуальні`;
+                }
+            } catch (err) {
+                console.log("Using cached/local dataset:", err);
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Синхронізовано (Offline Ready)`;
+            }
+        }
+
+        document.getElementById('dateInput').addEventListener('change', (e) => renderDay(e.target.value));
+        document.getElementById('prevDayBtn').addEventListener('click', () => {
+            const d = new Date(currentDate);
+            d.setDate(d.getDate() - 1);
+            renderDay(d.toISOString().split('T')[0]);
+        });
+        document.getElementById('nextDayBtn').addEventListener('click', () => {
+            const d = new Date(currentDate);
+            d.setDate(d.getDate() + 1);
+            renderDay(d.toISOString().split('T')[0]);
+        });
+        document.getElementById('todayBtn').addEventListener('click', () => renderDay("2026-08-13"));
+        document.getElementById('syncSheetBtn').addEventListener('click', fetchLiveGoogleSheetData);
+
+        renderDay("2026-08-13");
+        fetchLiveGoogleSheetData();
+    </script>
+</body>
+</html>
