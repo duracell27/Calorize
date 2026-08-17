@@ -26,7 +26,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
@@ -53,7 +53,7 @@
                 
                 <div class="flex items-center bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-300">
                     <i data-lucide="scale" class="w-4 h-4 text-emerald-400 mr-2"></i>
-                    <span>Вага: <strong id="headerWeightDisplay" class="text-slate-100 font-bold">76.2 кг</strong></span>
+                    <span>Вага: <strong id="headerWeightDisplay" class="text-slate-100 font-bold">76.7 кг</strong></span>
                 </div>
             </div>
         </div>
@@ -69,13 +69,13 @@
                 </button>
                 <div class="flex items-center space-x-2 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
                     <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i>
-                    <input type="date" id="dateInput" value="2026-08-13" class="bg-transparent text-slate-100 text-sm font-semibold focus:outline-none cursor-pointer">
+                    <input type="date" id="dateInput" class="bg-transparent text-slate-100 text-sm font-semibold focus:outline-none cursor-pointer">
                 </div>
                 <button id="nextDayBtn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition border border-slate-700">
                     <i data-lucide="chevron-right" class="w-5 h-5"></i>
                 </button>
-                <button id="todayBtn" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl text-xs font-semibold transition">
-                    13 серпня
+                <button id="todayBtn" class="px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl text-xs font-semibold transition">
+                    Сьогодні
                 </button>
             </div>
 
@@ -106,11 +106,11 @@
                         <i data-lucide="scale" class="w-4 h-4 text-slate-400"></i>
                     </div>
                     <div>
-                        <div class="text-3xl font-black tracking-tight"><span id="netVal">2795</span> <span class="text-xs font-normal text-slate-400">/ 2450 ккал</span></div>
-                        <div id="netStatus" class="text-xs font-semibold mt-1 text-rose-400">+345 ккал (114.1% - профіцит)</div>
+                        <div class="text-3xl font-black tracking-tight"><span id="netVal">0</span> <span class="text-xs font-normal text-slate-400">/ 2450 ккал</span></div>
+                        <div id="netStatus" class="text-xs font-semibold mt-1">0 ккал</div>
                     </div>
                     <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div id="netBar" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        <div id="netBar" class="h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -121,11 +121,11 @@
                         <i data-lucide="utensils" class="w-4 h-4 text-emerald-400"></i>
                     </div>
                     <div>
-                        <div class="text-3xl font-black text-slate-100 tracking-tight"><span id="calVal">3520</span> <span class="text-xs font-normal text-slate-400">/ 2450 ккал</span></div>
-                        <div id="calStatus" class="text-xs text-amber-400 font-semibold mt-1">143.7% норми (+1070)</div>
+                        <div class="text-3xl font-black text-slate-100 tracking-tight"><span id="calVal">0</span> <span class="text-xs font-normal text-slate-400">/ 2450 ккал</span></div>
+                        <div id="calStatus" class="text-xs text-slate-400 font-semibold mt-1">0% норми</div>
                     </div>
                     <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div id="calBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        <div id="calBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -136,11 +136,11 @@
                         <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
                     </div>
                     <div>
-                        <div class="text-3xl font-black text-orange-400 tracking-tight"><span id="burnVal">725</span> <span class="text-xs font-normal text-slate-400">/ 700 ккал</span></div>
-                        <div id="burnStatus" class="text-xs text-emerald-400 font-semibold mt-1">103.6% норми</div>
+                        <div class="text-3xl font-black text-orange-400 tracking-tight"><span id="burnVal">0</span> <span class="text-xs font-normal text-slate-400">/ 700 ккал</span></div>
+                        <div id="burnStatus" class="text-xs text-slate-400 font-semibold mt-1">0% норми</div>
                     </div>
                     <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div id="burnBar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        <div id="burnBar" class="bg-orange-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -161,11 +161,11 @@
                         <i data-lucide="beef" class="w-4 h-4 text-blue-400"></i>
                     </div>
                     <div>
-                        <div class="text-xl font-bold text-slate-100"><span id="protVal">99.2</span> <span class="text-xs font-normal text-slate-400">/ 137г</span></div>
-                        <div id="protStatus" class="text-[11px] text-blue-400 font-medium mt-0.5">72.4% (залиш. 37.8г)</div>
+                        <div class="text-xl font-bold text-slate-100"><span id="protVal">0</span> <span class="text-xs font-normal text-slate-400">/ 137г</span></div>
+                        <div id="protStatus" class="text-[11px] text-blue-400 font-medium mt-0.5">0% норми</div>
                     </div>
                     <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div id="protBar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 72.4%"></div>
+                        <div id="protBar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -176,11 +176,11 @@
                         <i data-lucide="droplet" class="w-4 h-4 text-amber-400"></i>
                     </div>
                     <div>
-                        <div class="text-xl font-bold text-slate-100"><span id="fatVal">163.8</span> <span class="text-xs font-normal text-slate-400">/ 76г</span></div>
-                        <div id="fatStatus" class="text-[11px] text-amber-400 font-medium mt-0.5">215.5% (перевищено)</div>
+                        <div class="text-xl font-bold text-slate-100"><span id="fatVal">0</span> <span class="text-xs font-normal text-slate-400">/ 76г</span></div>
+                        <div id="fatStatus" class="text-[11px] text-amber-400 font-medium mt-0.5">0% норми</div>
                     </div>
                     <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div id="fatBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        <div id="fatBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -191,11 +191,11 @@
                         <i data-lucide="wheat" class="w-4 h-4 text-purple-400"></i>
                     </div>
                     <div>
-                        <div class="text-xl font-bold text-slate-100"><span id="carbVal">379.1</span> <span class="text-xs font-normal text-slate-400">/ 305г</span></div>
-                        <div id="carbStatus" class="text-[11px] text-purple-400 font-medium mt-0.5">124.3% (+74г)</div>
+                        <div class="text-xl font-bold text-slate-100"><span id="carbVal">0</span> <span class="text-xs font-normal text-slate-400">/ 305г</span></div>
+                        <div id="carbStatus" class="text-[11px] text-purple-400 font-medium mt-0.5">0% норми</div>
                     </div>
                     <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div id="carbBar" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        <div id="carbBar" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -206,11 +206,11 @@
                         <i data-lucide="sprout" class="w-4 h-4 text-emerald-400"></i>
                     </div>
                     <div>
-                        <div class="text-xl font-bold text-slate-100"><span id="fiberVal">26.5</span> <span class="text-xs font-normal text-slate-400">/ 30г</span></div>
-                        <div id="fiberStatus" class="text-[11px] text-emerald-400 font-medium mt-0.5">88.3% (залиш. 3.5г)</div>
+                        <div class="text-xl font-bold text-slate-100"><span id="fiberVal">0</span> <span class="text-xs font-normal text-slate-400">/ 30г</span></div>
+                        <div id="fiberStatus" class="text-[11px] text-emerald-400 font-medium mt-0.5">0% норми</div>
                     </div>
                     <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div id="fiberBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 88.3%"></div>
+                        <div id="fiberBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -221,11 +221,11 @@
                         <i data-lucide="glass-water" class="w-4 h-4 text-cyan-400"></i>
                     </div>
                     <div>
-                        <div class="text-xl font-bold text-slate-100"><span id="hydraVal">1845</span> <span class="text-xs font-normal text-slate-400">/ 2650мл</span></div>
-                        <div id="hydraStatus" class="text-[11px] text-cyan-400 font-medium mt-0.5">69.6% (ефективна)</div>
+                        <div class="text-xl font-bold text-slate-100"><span id="hydraVal">0</span> <span class="text-xs font-normal text-slate-400">/ 2650мл</span></div>
+                        <div id="hydraStatus" class="text-[11px] text-cyan-400 font-medium mt-0.5">0% норми</div>
                     </div>
                     <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div id="hydraBar" class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: 69.6%"></div>
+                        <div id="hydraBar" class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -267,22 +267,35 @@
             </div>
         </div>
 
-        <!-- Categorized Meal Sections (6 blocks - NO activity in meals) -->
+        <!-- Categorized Meal Sections (6 blocks - NO activity or weight in meals) -->
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
                     <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
-                    Прийоми їжі за <span id="selectedDateTitle" class="text-emerald-400">13.08.2026</span>
+                    Прийоми їжі за <span id="selectedDateTitle" class="text-emerald-400">17.08.2026</span>
                 </h2>
                 <div class="text-xs text-slate-400 flex items-center gap-3">
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Вода (100%)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Кола/Пепсі (85%)</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Кава/Чай (80%)</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Пиво (60%)</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Їжа</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-600"></span> Горілка (-50%)</span>
                 </div>
             </div>
 
             <div id="mealSectionsContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- Weight History Section (Last 7 Measurements with +/- color diff) -->
+        <div class="space-y-3 pt-2">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <i data-lucide="scale" class="w-5 h-5 text-emerald-400"></i>
+                    Історія зважувань <span class="text-xs font-normal text-slate-400">(останні 7 вимірів)</span>
+                </h2>
+            </div>
+
+            <div id="weightHistoryContainer" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3"></div>
         </div>
 
     </main>
@@ -291,83 +304,86 @@
     <script>
         const SPREADSHEET_ID = '13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM';
         const NORMS = { cal: 2450, burn: 700, p: 137, f: 76, c: 305, fiber: 30, water: 2650 };
-        let currentDate = "2026-08-13";
+        
+        // Start with today's date dynamically
+        let currentDate = new Date().toISOString().split('T')[0];
 
-        function getHydrationFactor(name, type) {
+        // Scientific Hydration Factor Parser
+        function getHydrationFactor(name) {
             const lower = (name || "").toLowerCase();
-            if (lower.includes("чиста") || lower.includes("водичка") || type === "water" || lower === "вода") return 1.0;
-            if (lower.includes("кава") || lower.includes("еспресо") || lower.includes("американо")) return 0.8;
-            if (lower.includes("чай")) return 0.85;
-            if (lower.includes("пепсі") || lower.includes("кола") || lower.includes("сік") || lower.includes("лимонад")) return 0.85;
-            if (lower.includes("опілля") || lower.includes("пиво") || lower.includes("сидр") || lower.includes("радлер")) return 0.6;
-            if (lower.includes("вино")) return 0.2;
-            if (lower.includes("горілка") || lower.includes("віскі")) return -0.5;
+            // Strong alcohol (>35%) -> Negative Hydration (Dehydrating!)
+            if (lower.includes("горілка") || lower.includes("віскі") || lower.includes("ром") || lower.includes("коньяк") || lower.includes("джин") || lower.includes("шнапс")) {
+                return -0.5;
+            }
+            // Wine (~12-14%)
+            if (lower.includes("вино") || lower.includes("шампанськ") || lower.includes("просекко")) {
+                return 0.2;
+            }
+            // Beer / Cider / Radler (~4-5%)
+            if (lower.includes("пиво") || lower.includes("опілля") || lower.includes("сидр") || lower.includes("радлер") || lower.includes("хміль")) {
+                return 0.6;
+            }
+            // Coffee & MacCoffee
+            if (lower.includes("кава") || lower.includes("еспресо") || lower.includes("американо") || lower.includes("maccoffee") || lower.includes("латте") || lower.includes("капучино")) {
+                return 0.8;
+            }
+            // Tea / Cola / Pepsi / Energy drinks / Juices / Flavored Water (85%)
+            if (lower.includes("чай") || lower.includes("кола") || lower.includes("cola") || lower.includes("пепсі") || lower.includes("pepsi") || lower.includes("енергетик") || lower.includes("best") || lower.includes("сік") || lower.includes("лимонад") || lower.includes("тонік") || lower.includes("ананас")) {
+                return 0.85;
+            }
+            // Watermelon (Кавун) - 92% natural water content
+            if (lower.includes("кавун")) {
+                return 0.92;
+            }
+            // Pure Still Water
+            if (lower.includes("вод")) {
+                return 1.0;
+            }
             return 0.0;
         }
 
-        let database = {
-            "2026-08-13": {
-                weight: 76.2,
-                burned: 725,
-                meals: {
-                    "Сніданок": [
-                        { name: "Кава (чорна, без цукру)", type: "coffee", weight: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, fiber: 0, volume: 200 }
-                    ],
-                    "Перекус 1": [
-                        { name: "Чизкейк класичний", type: "food", weight: "200 г", cal: 642, p: 11, f: 45, c: 51, fiber: 0.5, volume: 0 },
-                        { name: "Торт Медовик", type: "food", weight: "100 г", cal: 410, p: 6, f: 20, c: 52, fiber: 0.5, volume: 0 }
-                    ],
-                    "Обід": [
-                        { name: "Буріто велике", type: "food", weight: "500 г", cal: 1050, p: 45, f: 40, c: 125, fiber: 10.0, volume: 0 }
-                    ],
-                    "Перекус 2": [
-                        { name: "Кава", type: "coffee", weight: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, fiber: 0, volume: 250 },
-                        { name: "Пепсі", type: "soda", weight: "100 мл", cal: 43, p: 0, f: 0, c: 10.7, fiber: 0, volume: 100 },
-                        { name: "Чиста питна вода", type: "water", weight: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, volume: 600 }
-                    ],
-                    "Вечеря": [
-                        { name: "Салат (помідор, огірок, цибуля, йогурт)", type: "food", weight: "250 г", cal: 90, p: 4.0, f: 3.0, c: 11.0, fiber: 4.5, volume: 0 },
-                        { name: "Хліб (3 великі скибки)", type: "food", weight: "135 г", cal: 340, p: 11.0, f: 2.0, c: 68.0, fiber: 4.0, volume: 0 },
-                        { name: "Чиста питна вода (вечір)", type: "water", weight: "500 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, volume: 500 }
-                    ],
-                    "Перекус 3": [
-                        { name: "Пиво Опілля", type: "alcohol", weight: "500 мл", cal: 210, p: 2.5, f: 0, c: 17.5, fiber: 0, volume: 500 },
-                        { name: "Горішки Своя Лінія", type: "food", weight: "60 г", cal: 360, p: 15.0, f: 30.0, c: 7.5, fiber: 4.5, volume: 0 },
-                        { name: "Чіпси Chipsters", type: "food", weight: "70 г", cal: 370, p: 4.2, f: 23.8, c: 35.7, fiber: 2.5, volume: 0 }
-                    ]
-                }
-            }
-        };
+        let database = {};
+        let weightHistory = []; // list of { date: 'YYYY-MM-DD', weight: 76.7 }
 
         let macroChartInstance = null;
         let waterChartInstance = null;
         let weightChartInstance = null;
 
-        function getIconForType(name, type) {
+        function getIconForType(name, factor) {
             const lower = (name || "").toLowerCase();
-            if (type === "water" || lower.includes("вод")) {
-                return `<div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg border border-cyan-500/20" title="Чиста вода (100% гідратація)"><i data-lucide="droplet" class="w-4 h-4"></i></div>`;
+            if (factor === -0.5 || lower.includes("горілка") || lower.includes("віскі")) {
+                return `<div class="p-2 bg-red-500/10 text-red-500 rounded-lg border border-red-500/20" title="Міцний алкоголь (дегідрація -50%)"><i data-lucide="skull" class="w-4 h-4"></i></div>`;
             }
-            if (type === "alcohol" || lower.includes("опілля") || lower.includes("пив") || lower.includes("вин") || lower.includes("алког") || lower.includes("віскі") || lower.includes("сидр")) {
-                return `<div class="p-2 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20" title="Пиво/Алкоголь (60% гідратація)"><i data-lucide="wine" class="w-4 h-4"></i></div>`;
+            if (factor === 0.6 || lower.includes("пиво") || lower.includes("опілля") || lower.includes("сидр")) {
+                return `<div class="p-2 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20" title="Пиво (60% гідратація)"><i data-lucide="wine" class="w-4 h-4"></i></div>`;
             }
-            if (lower.includes("кав") || lower.includes("чай") || type === "coffee") {
+            if (factor === 0.8 || lower.includes("кава") || lower.includes("maccoffee")) {
                 return `<div class="p-2 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20" title="Кава/Чай (80% гідратація)"><i data-lucide="coffee" class="w-4 h-4"></i></div>`;
             }
-            if (lower.includes("пепсі") || lower.includes("кола") || type === "soda") {
-                return `<div class="p-2 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20" title="Напій"><i data-lucide="cup-soda" class="w-4 h-4"></i></div>`;
+            if (lower.includes("кола") || lower.includes("cola") || lower.includes("пепсі") || lower.includes("енергетик") || lower.includes("сік") || lower.includes("ананас")) {
+                return `<div class="p-2 bg-purple-500/10 text-purple-400 rounded-lg border border-purple-500/20" title="Кола / Напій (85% гідратація)"><i data-lucide="cup-soda" class="w-4 h-4"></i></div>`;
             }
-            return `<div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20" title="Страва"><i data-lucide="utensils" class="w-4 h-4"></i></div>`;
+            if (lower.includes("кавун")) {
+                return `<div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20" title="Кавун (92% води)"><i data-lucide="citrus" class="w-4 h-4"></i></div>`;
+            }
+            if (factor === 1.0 || lower.includes("вод")) {
+                return `<div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg border border-cyan-500/20" title="Чиста вода (100% гідратація)"><i data-lucide="droplet" class="w-4 h-4"></i></div>`;
+            }
+            return `<div class="p-2 bg-slate-800 text-emerald-400 rounded-lg border border-slate-700" title="Страва"><i data-lucide="utensils" class="w-4 h-4"></i></div>`;
         }
 
         function renderDay(dateStr) {
             currentDate = dateStr;
             document.getElementById('dateInput').value = dateStr;
-            document.getElementById('selectedDateTitle').innerText = dateStr;
-
-            const dayData = database[dateStr] || { weight: 76.2, burned: 0, meals: { "Сніданок": [], "Перекус 1": [], "Обід": [], "Перекус 2": [], "Вечеря": [], "Перекус 3": [] } };
             
-            document.getElementById('headerWeightDisplay').innerText = (dayData.weight || 76.2) + " кг";
+            const dateParts = dateStr.split('-');
+            const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : dateStr;
+            document.getElementById('selectedDateTitle').innerText = formattedDate;
+
+            const dayData = database[dateStr] || { weight: null, burned: 0, meals: { "Сніданок": [], "Перекус 1": [], "Обід": [], "Перекус 2": [], "Вечеря": [], "Перекус 3": [] } };
+            
+            const displayWeight = dayData.weight || (weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].weight : 76.7);
+            document.getElementById('headerWeightDisplay').innerText = displayWeight + " кг";
 
             let totCal = 0, totP = 0, totF = 0, totC = 0, totFiber = 0, effectiveHydration = 0;
             const sections = ["Сніданок", "Перекус 1", "Обід", "Перекус 2", "Вечеря", "Перекус 3"];
@@ -391,15 +407,28 @@
                         totFiber += item.fiber || 0;
                         secCal += item.cal || 0;
 
-                        const factor = getHydrationFactor(item.name, item.type);
-                        const hydraContribution = (item.volume || 0) * factor;
+                        const factor = getHydrationFactor(item.name);
+                        
+                        // If item is watermelon and volume is 0, estimate volume from weight (e.g. 500g -> 460ml)
+                        let vol = item.volume || 0;
+                        if (vol === 0 && item.name.toLowerCase().includes("кавун")) {
+                            const matchG = (item.weight || "").match(/\d+/);
+                            const g = matchG ? Number(matchG[0]) : 400;
+                            vol = Math.round(g * 0.92);
+                        }
+
+                        const hydraContribution = vol * (factor === 0.92 ? 1.0 : factor);
                         effectiveHydration += hydraContribution;
 
-                        const iconHtml = getIconForType(item.name, item.type);
+                        const iconHtml = getIconForType(item.name, factor);
 
                         let extraBadge = "";
-                        if (item.volume > 0) {
-                            extraBadge = `<span class="text-xs text-cyan-400 ml-2">💧 +${Math.round(hydraContribution)}мл (${Math.round(factor * 100)}%)</span>`;
+                        if (vol > 0 || factor !== 0.0) {
+                            if (factor < 0) {
+                                extraBadge = `<span class="text-xs text-rose-500 font-semibold ml-2">⚠️ ${Math.round(hydraContribution)}мл (зневоднення)</span>`;
+                            } else {
+                                extraBadge = `<span class="text-xs text-cyan-400 ml-2">💧 +${Math.round(hydraContribution)}мл (${Math.round(factor * 100)}%)</span>`;
+                            }
                         }
 
                         itemsHtml += `
@@ -407,8 +436,8 @@
                                 <div class="flex items-center space-x-3">
                                     ${iconHtml}
                                     <div>
-                                        <div class="font-semibold text-slate-100 flex items-center">${item.name} ${extraBadge}</div>
-                                        <div class="text-xs text-slate-400">${item.weight || ''}</div>
+                                        <div class="font-semibold text-slate-100 flex items-center flex-wrap">${item.name} ${extraBadge}</div>
+                                        <div class="text-xs text-slate-400">${item.weight || ''} ${item.notes ? '• ' + item.notes : ''}</div>
                                     </div>
                                 </div>
                                 <div class="text-right">
@@ -443,7 +472,7 @@
             const burned = dayData.burned || 0;
             document.getElementById('burnVal').innerText = Math.round(burned);
             const burnPct = ((burned / NORMS.burn) * 100).toFixed(1);
-            document.getElementById('burnStatus').innerText = `${burnPct}% норми`;
+            document.getElementById('burnStatus').innerText = `${burnPct}% норми (700)`;
             document.getElementById('burnBar').style.width = `${Math.min(100, burnPct)}%`;
 
             // 2. Calories Consumed
@@ -453,7 +482,7 @@
             document.getElementById('calStatus').innerText = `${calPct}% норми (${calDiff > 0 ? '+' + calDiff : calDiff})`;
             document.getElementById('calBar').style.width = `${Math.min(100, calPct)}%`;
 
-            // 3. Caloric Balance (Чисті калорії = Спожито - Витрачено) with specific user color coding:
+            // 3. Caloric Balance (Net = Consumed - Burned) with strict color rules:
             // > 100% -> Red, 70-100% -> Green, < 70% -> Yellow
             const netCal = Math.round(totCal - burned);
             const netPct = (netCal / NORMS.cal) * 100;
@@ -466,29 +495,29 @@
             netValEl.innerText = netCal;
 
             if (netPct > 100) {
-                // RED (Above norm / Surplus)
+                // RED (Surplus)
                 netValEl.className = "text-3xl font-black tracking-tight text-rose-400";
                 netStatusEl.className = "text-xs font-semibold mt-1 text-rose-400";
                 netStatusEl.innerText = `+${netDiff} ккал (${netPct.toFixed(1)}% - профіцит / вище норми)`;
                 netBarEl.className = "bg-rose-500 h-full rounded-full transition-all duration-500";
                 netBarEl.style.width = "100%";
             } else if (netPct >= 70) {
-                // GREEN (In norm range 70-100%)
+                // GREEN (Norm range 70-100%)
                 netValEl.className = "text-3xl font-black tracking-tight text-emerald-400";
                 netStatusEl.className = "text-xs font-semibold mt-1 text-emerald-400";
-                netStatusEl.innerText = `${netDiff} ккал (${netPct.toFixed(1)}% - в районі норми)`;
+                netStatusEl.innerText = `${netDiff} ккал (${netPct.toFixed(1)}% - в нормі)`;
                 netBarEl.className = "bg-emerald-500 h-full rounded-full transition-all duration-500";
                 netBarEl.style.width = `${netPct}%`;
             } else {
-                // YELLOW (Under 70% / Low)
+                // YELLOW (< 70%)
                 netValEl.className = "text-3xl font-black tracking-tight text-amber-400";
                 netStatusEl.className = "text-xs font-semibold mt-1 text-amber-400";
                 netStatusEl.innerText = `${netDiff} ккал (${netPct.toFixed(1)}% - недобір менше 70%)`;
                 netBarEl.className = "bg-amber-500 h-full rounded-full transition-all duration-500";
-                netBarEl.style.width = `${netPct}%`;
+                netBarEl.style.width = `${Math.max(5, netPct)}%`;
             }
 
-            // --- ROW 2 LOGIC (Nutrients & Hydration) ---
+            // --- ROW 2 LOGIC ---
             // Protein
             document.getElementById('protVal').innerText = totP.toFixed(1);
             const protPct = ((totP / NORMS.p) * 100).toFixed(1);
@@ -517,10 +546,59 @@
             document.getElementById('hydraVal').innerText = Math.round(effectiveHydration);
             const hydraPct = ((effectiveHydration / NORMS.water) * 100).toFixed(1);
             document.getElementById('hydraStatus').innerText = `${hydraPct}% норми`;
-            document.getElementById('hydraBar').style.width = `${Math.min(100, hydraPct)}%`;
+            document.getElementById('hydraBar').style.width = `${Math.min(100, Math.max(0, hydraPct))}%`;
 
+            renderWeightHistory();
             updateCharts(totP, totF, totC);
             lucide.createIcons();
+        }
+
+        // Render Last 7 Weight Measurements with +/- Diff Color Coding
+        function renderWeightHistory() {
+            const container = document.getElementById('weightHistoryContainer');
+            if (!container) return;
+
+            // Sort weight entries by date
+            const sortedWeights = [...weightHistory].sort((a, b) => a.date.localeCompare(b.date));
+            const last7 = sortedWeights.slice(-7);
+
+            if (last7.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-4 text-center text-xs text-slate-500 bg-slate-900 rounded-2xl border border-slate-800">Немає збережених замірів ваги</div>`;
+                return;
+            }
+
+            let html = "";
+            last7.forEach((item, index) => {
+                let diffHtml = '<span class="text-slate-500 font-medium text-xs">старт</span>';
+                if (index > 0) {
+                    const prevWeight = last7[index - 1].weight;
+                    const diff = Number((item.weight - prevWeight).toFixed(2));
+                    if (diff > 0) {
+                        // Up -> Red
+                        diffHtml = `<span class="text-rose-400 font-bold text-xs flex items-center justify-center gap-0.5"><i data-lucide="trending-up" class="w-3 h-3"></i> +${diff} кг</span>`;
+                    } else if (diff < 0) {
+                        // Down -> Green
+                        diffHtml = `<span class="text-emerald-400 font-bold text-xs flex items-center justify-center gap-0.5"><i data-lucide="trending-down" class="w-3 h-3"></i> ${diff} кг</span>`;
+                    } else {
+                        diffHtml = `<span class="text-slate-400 font-medium text-xs">0.0 кг</span>`;
+                    }
+                }
+
+                const dParts = item.date.split('-');
+                const shortDate = dParts.length === 3 ? `${dParts[2]}.${dParts[1]}` : item.date;
+
+                const isCurrentSelected = item.date === currentDate;
+
+                html += `
+                    <div class="p-3.5 rounded-2xl border ${isCurrentSelected ? 'bg-slate-800/90 border-emerald-500/50 shadow-lg shadow-emerald-950/40' : 'bg-slate-900 border-slate-800'} text-center space-y-1.5 transition">
+                        <div class="text-xs text-slate-400 font-semibold">${shortDate}</div>
+                        <div class="text-lg font-black text-slate-100">${item.weight} <span class="text-xs font-normal text-slate-400">кг</span></div>
+                        <div class="pt-0.5">${diffHtml}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         function updateCharts(p, f, c) {
@@ -551,13 +629,23 @@
                 if (day && day.meals) {
                     Object.values(day.meals).forEach(list => {
                         list.forEach(it => {
-                            eff += (it.volume || 0) * getHydrationFactor(it.name, it.type);
+                            const f = getHydrationFactor(it.name);
+                            let vol = it.volume || 0;
+                            if (vol === 0 && it.name.toLowerCase().includes("кавун")) {
+                                const matchG = (it.weight || "").match(/\d+/);
+                                const g = matchG ? Number(matchG[0]) : 400;
+                                vol = Math.round(g * 0.92);
+                            }
+                            eff += vol * (f === 0.92 ? 1.0 : f);
                         });
                     });
                 }
                 return Math.round(eff);
             });
-            const weightData = dates.map(d => database[d]?.weight || 76.2);
+
+            const weightMap = {};
+            weightHistory.forEach(w => { weightMap[w.date] = w.weight; });
+            const weightData = dates.map(d => weightMap[d] || (database[d]?.weight || 76.7));
             const dateLabels = dates.map(d => d.split('-').slice(1).reverse().join('.'));
 
             if (waterChartInstance) waterChartInstance.destroy();
@@ -609,13 +697,13 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' }, suggestedMin: 75.0, suggestedMax: 77.5 }
+                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' }, suggestedMin: 75.0, suggestedMax: 78.0 }
                     }
                 }
             });
         }
 
-        // Live Google Sheets Parser (GViz API)
+        // Live Google Sheets Parser
         async function fetchGoogleSheetsLive() {
             const statusEl = document.getElementById('syncStatus');
             const syncIcon = document.getElementById('syncIcon');
@@ -641,12 +729,23 @@
                 statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Дані актуальні`;
             } finally {
                 syncIcon.classList.remove('animate-spin');
+                
+                // Set date to today if available, or latest date in DB
+                const today = new Date().toISOString().split('T')[0];
+                if (database[today]) {
+                    currentDate = today;
+                } else if (Object.keys(database).length > 0) {
+                    const sortedDates = Object.keys(database).sort();
+                    currentDate = sortedDates[sortedDates.length - 1];
+                }
+                
                 renderDay(currentDate);
             }
         }
 
         function parseGoogleSheetRows(rows) {
             const newDatabase = {};
+            const weightsMap = {};
 
             rows.forEach(r => {
                 const c = r.c;
@@ -669,7 +768,7 @@
 
                 if (!newDatabase[dateStr]) {
                     newDatabase[dateStr] = {
-                        weight: 76.2,
+                        weight: null,
                         burned: 0,
                         meals: { "Сніданок": [], "Перекус 1": [], "Обід": [], "Перекус 2": [], "Вечеря": [], "Перекус 3": [] }
                     };
@@ -678,6 +777,7 @@
                 const meal = (c[1] && (c[1].f || c[1].v)) ? String(c[1].f || c[1].v).trim() : "Перекус 1";
                 const name = (c[2] && (c[2].f || c[2].v)) ? String(c[2].f || c[2].v).trim() : "";
                 const weight = (c[3] && (c[3].f || c[3].v)) ? String(c[3].f || c[3].v).trim() : "";
+                const notes = (c[13] && (c[13].f || c[13].v)) ? String(c[13].f || c[13].v).trim() : "";
                 
                 function safeNum(cellObj, maxLimit = 10000) {
                     if (!cellObj || cellObj.v === null || cellObj.v === undefined) return 0;
@@ -698,15 +798,23 @@
                 const water = safeNum(c[10], 10000);
                 const bodyWeight = safeNum(c[12], 300);
 
-                if (bodyWeight > 30) newDatabase[dateStr].weight = bodyWeight;
+                if (bodyWeight > 30) {
+                    newDatabase[dateStr].weight = bodyWeight;
+                    weightsMap[dateStr] = bodyWeight;
+                }
                 if (burned > 0) newDatabase[dateStr].burned += burned;
 
                 // Activity filter
                 const isActivity = meal.toLowerCase().includes("активн") || name.toLowerCase().includes("активн") || name.toLowerCase().includes("garmin");
-
                 if (isActivity) {
                     if (cal > 0 && burned === 0) newDatabase[dateStr].burned += cal;
-                    return; // Do not add to meals
+                    return; // DO NOT add to meals
+                }
+
+                // Weight log filter (DO NOT add weight rows to meals)
+                const isWeightRow = meal.toLowerCase().includes("зважуван") || name.toLowerCase().includes("зважуван") || name.toLowerCase().includes("вага");
+                if (isWeightRow) {
+                    return; // Handled strictly in weightHistory
                 }
 
                 if (name) {
@@ -718,30 +826,16 @@
                     else if (meal.includes("Вечеря")) targetMeal = "Вечеря";
                     else if (meal.includes("Перекус 3")) targetMeal = "Перекус 3";
 
-                    let itemType = "food";
-                    const lowerName = name.toLowerCase();
-                    if (water > 0 || lowerName.includes("вод")) {
-                        if (lowerName.includes("пив") || lowerName.includes("вин") || lowerName.includes("алког") || lowerName.includes("опілля")) {
-                            itemType = "alcohol";
-                        } else if (lowerName.includes("кав") || lowerName.includes("чай")) {
-                            itemType = "coffee";
-                        } else if (lowerName.includes("пепсі") || lowerName.includes("кола") || lowerName.includes("сік")) {
-                            itemType = "soda";
-                        } else {
-                            itemType = "water";
-                        }
-                    }
-
                     newDatabase[dateStr].meals[targetMeal].push({
                         name: name,
-                        type: itemType,
                         weight: weight,
                         cal: cal,
                         p: p,
                         f: f,
                         c: carbs,
                         fiber: fiber,
-                        volume: water
+                        volume: water,
+                        notes: notes
                     });
                 }
             });
@@ -749,6 +843,8 @@
             if (Object.keys(newDatabase).length > 0) {
                 database = newDatabase;
             }
+
+            weightHistory = Object.keys(weightsMap).map(d => ({ date: d, weight: weightsMap[d] }));
         }
 
         document.getElementById('dateInput').addEventListener('change', (e) => renderDay(e.target.value));
@@ -762,10 +858,12 @@
             d.setDate(d.getDate() + 1);
             renderDay(d.toISOString().split('T')[0]);
         });
-        document.getElementById('todayBtn').addEventListener('click', () => renderDay("2026-08-13"));
+        document.getElementById('todayBtn').addEventListener('click', () => {
+            const today = new Date().toISOString().split('T')[0];
+            renderDay(today);
+        });
         document.getElementById('syncSheetBtn').addEventListener('click', fetchGoogleSheetsLive);
 
-        renderDay("2026-08-13");
         fetchGoogleSheetsLive();
     </script>
 </body>
