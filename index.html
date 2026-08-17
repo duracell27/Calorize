@@ -53,7 +53,7 @@
                 
                 <div class="flex items-center bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-300">
                     <i data-lucide="scale" class="w-4 h-4 text-emerald-400 mr-2"></i>
-                    <span>Вага: <strong id="headerWeightDisplay" class="text-slate-100 font-bold">76.7 кг</strong></span>
+                    <span>Поточна вага: <strong id="headerWeightDisplay" class="text-slate-100 font-bold">76.7 кг</strong></span>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- 1. Caloric Balance (Чисті калорії) -->
+                <!-- 1. Caloric Balance -->
                 <div id="netCardBox" class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-md space-y-3">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
                         <span>Баланс калорій</span>
@@ -114,7 +114,7 @@
                     </div>
                 </div>
 
-                <!-- 2. Calories Consumed (Спожито) -->
+                <!-- 2. Calories Consumed -->
                 <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-md space-y-3">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
                         <span>Спожито</span>
@@ -129,7 +129,7 @@
                     </div>
                 </div>
 
-                <!-- 3. Calories Burned / Garmin (Витрачено) -->
+                <!-- 3. Calories Burned (Garmin) -->
                 <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-md space-y-3">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
                         <span>Витрачено (Garmin)</span>
@@ -255,7 +255,7 @@
                 </div>
             </div>
 
-            <!-- Chart 3: Weekly Weight Trend Chart -->
+            <!-- Chart 3: Weight Trend Chart (Only actual weigh-in dates!) -->
             <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-md flex flex-col justify-between">
                 <h3 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
                     <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
@@ -274,28 +274,47 @@
                     <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
                     Прийоми їжі за <span id="selectedDateTitle" class="text-emerald-400">17.08.2026</span>
                 </h2>
-                <div class="text-xs text-slate-400 flex items-center gap-3">
+                <div class="text-xs text-slate-400 hidden sm:flex items-center gap-3">
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Вода (100%)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Кавун (92%)</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Кола/Пепсі (85%)</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Кава/Чай (80%)</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Пиво (60%)</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-600"></span> Горілка (-50%)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-600"></span> Горілка (-300%)</span>
                 </div>
             </div>
 
             <div id="mealSectionsContainer" class="space-y-4"></div>
         </div>
 
-        <!-- Weight History Section (Last 7 Measurements with +/- color diff) -->
+        <!-- Weight History Section (TABULAR VIEW - Table of measurements with date & +/- diff) -->
         <div class="space-y-3 pt-2">
-            <div class="flex items-center justify-between">
-                <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-                    <i data-lucide="scale" class="w-5 h-5 text-emerald-400"></i>
-                    Історія зважувань <span class="text-xs font-normal text-slate-400">(останні 7 вимірів)</span>
-                </h2>
-            </div>
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-md">
+                <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
+                    <div class="font-bold text-slate-100 text-sm flex items-center gap-2">
+                        <i data-lucide="scale" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Історія зважувань (останні виміри)</span>
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        Всього замірів: <span id="weightTotalCount" class="font-bold text-slate-200">2</span>
+                    </div>
+                </div>
 
-            <div id="weightHistoryContainer" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3"></div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="text-xs uppercase bg-slate-950/30 text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="px-5 py-3 font-semibold">Дата</th>
+                                <th class="px-5 py-3 font-semibold">Вага</th>
+                                <th class="px-5 py-3 font-semibold">Зміна ваги</th>
+                                <th class="px-5 py-3 font-semibold">Динаміка</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weightHistoryTableBody" class="divide-y divide-slate-800/60">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
     </main>
@@ -305,40 +324,50 @@
         const SPREADSHEET_ID = '13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM';
         const NORMS = { cal: 2450, burn: 700, p: 137, f: 76, c: 305, fiber: 30, water: 2650 };
         
-        // Start with today's date dynamically
         let currentDate = new Date().toISOString().split('T')[0];
 
-        // Scientific Hydration Factor Parser
+        // Scientific Hydration Factor Parser with Word Boundary Regex to avoid false positives (e.g. "сиром" != "ром")
         function getHydrationFactor(name) {
-            const lower = (name || "").toLowerCase();
-            // Strong alcohol (>35%) -> Negative Hydration (Dehydrating!)
-            if (lower.includes("горілка") || lower.includes("віскі") || lower.includes("ром") || lower.includes("коньяк") || lower.includes("джин") || lower.includes("шнапс")) {
-                return -0.5;
+            if (!name) return 0.0;
+            const lower = " " + name.toLowerCase() + " ";
+
+            // Strong alcohol (>35%) -> Negative Hydration (Dehydrating -300%)
+            const strongKeywords = ["горілк", "віскі", "коньяк", "джин", "шнапс", "текіл"];
+            if (strongKeywords.some(k => lower.includes(k)) || /\b(ром|рому|ромом)\b/i.test(lower)) {
+                return -3.0;
             }
+
             // Wine (~12-14%)
             if (lower.includes("вино") || lower.includes("шампанськ") || lower.includes("просекко")) {
                 return 0.2;
             }
+
             // Beer / Cider / Radler (~4-5%)
-            if (lower.includes("пиво") || lower.includes("опілля") || lower.includes("сидр") || lower.includes("радлер") || lower.includes("хміль")) {
+            if (lower.includes("пиво") || lower.includes("опілля") || lower.includes("радлер") || lower.includes("хміль") || /\b(сидр|сидру)\b/i.test(lower)) {
                 return 0.6;
             }
+
             // Coffee & MacCoffee
             if (lower.includes("кава") || lower.includes("еспресо") || lower.includes("американо") || lower.includes("maccoffee") || lower.includes("латте") || lower.includes("капучино")) {
                 return 0.8;
             }
+
             // Tea / Cola / Pepsi / Energy drinks / Juices / Flavored Water (85%)
             if (lower.includes("чай") || lower.includes("кола") || lower.includes("cola") || lower.includes("пепсі") || lower.includes("pepsi") || lower.includes("енергетик") || lower.includes("best") || lower.includes("сік") || lower.includes("лимонад") || lower.includes("тонік") || lower.includes("ананас")) {
                 return 0.85;
             }
+
             // Watermelon (Кавун) - 92% natural water content
             if (lower.includes("кавун")) {
                 return 0.92;
             }
-            // Pure Still Water
-            if (lower.includes("вод")) {
+
+            // Pure Still Water (and exclude cheese "сиром")
+            if (lower.includes("вод") && !lower.includes("сиром")) {
                 return 1.0;
             }
+
+            // Ordinary solid food has 0 extra hydration badge
             return 0.0;
         }
 
@@ -351,22 +380,22 @@
 
         function getIconForType(name, factor) {
             const lower = (name || "").toLowerCase();
-            if (factor === -0.5 || lower.includes("горілка") || lower.includes("віскі")) {
-                return `<div class="p-2 bg-red-500/10 text-red-500 rounded-lg border border-red-500/20" title="Міцний алкоголь (дегідрація -50%)"><i data-lucide="skull" class="w-4 h-4"></i></div>`;
+            if (factor === -3.0) {
+                return `<div class="p-2 bg-red-500/10 text-red-500 rounded-lg border border-red-500/20" title="Міцний алкоголь (дегідрація -300%)"><i data-lucide="skull" class="w-4 h-4"></i></div>`;
             }
-            if (factor === 0.6 || lower.includes("пиво") || lower.includes("опілля") || lower.includes("сидр")) {
+            if (factor === 0.6) {
                 return `<div class="p-2 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20" title="Пиво (60% гідратація)"><i data-lucide="wine" class="w-4 h-4"></i></div>`;
             }
-            if (factor === 0.8 || lower.includes("кава") || lower.includes("maccoffee")) {
+            if (factor === 0.8) {
                 return `<div class="p-2 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20" title="Кава/Чай (80% гідратація)"><i data-lucide="coffee" class="w-4 h-4"></i></div>`;
             }
-            if (lower.includes("кола") || lower.includes("cola") || lower.includes("пепсі") || lower.includes("енергетик") || lower.includes("сік") || lower.includes("ананас")) {
+            if (factor === 0.85) {
                 return `<div class="p-2 bg-purple-500/10 text-purple-400 rounded-lg border border-purple-500/20" title="Кола / Напій (85% гідратація)"><i data-lucide="cup-soda" class="w-4 h-4"></i></div>`;
             }
-            if (lower.includes("кавун")) {
+            if (factor === 0.92 || lower.includes("кавун")) {
                 return `<div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20" title="Кавун (92% води)"><i data-lucide="citrus" class="w-4 h-4"></i></div>`;
             }
-            if (factor === 1.0 || lower.includes("вод")) {
+            if (factor === 1.0) {
                 return `<div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg border border-cyan-500/20" title="Чиста вода (100% гідратація)"><i data-lucide="droplet" class="w-4 h-4"></i></div>`;
             }
             return `<div class="p-2 bg-slate-800 text-emerald-400 rounded-lg border border-slate-700" title="Страва"><i data-lucide="utensils" class="w-4 h-4"></i></div>`;
@@ -409,7 +438,6 @@
 
                         const factor = getHydrationFactor(item.name);
                         
-                        // If item is watermelon and volume is 0, estimate volume from weight (e.g. 500g -> 460ml)
                         let vol = item.volume || 0;
                         if (vol === 0 && item.name.toLowerCase().includes("кавун")) {
                             const matchG = (item.weight || "").match(/\d+/);
@@ -423,7 +451,7 @@
                         const iconHtml = getIconForType(item.name, factor);
 
                         let extraBadge = "";
-                        if (vol > 0 || factor !== 0.0) {
+                        if (factor !== 0.0 && vol > 0) {
                             if (factor < 0) {
                                 extraBadge = `<span class="text-xs text-rose-500 font-semibold ml-2">⚠️ ${Math.round(hydraContribution)}мл (зневоднення)</span>`;
                             } else {
@@ -548,60 +576,73 @@
             document.getElementById('hydraStatus').innerText = `${hydraPct}% норми`;
             document.getElementById('hydraBar').style.width = `${Math.min(100, Math.max(0, hydraPct))}%`;
 
-            renderWeightHistory();
+            renderWeightTable();
             updateCharts(totP, totF, totC);
             lucide.createIcons();
         }
 
-        // Render Last 7 Weight Measurements with +/- Diff Color Coding
-        function renderWeightHistory() {
-            const container = document.getElementById('weightHistoryContainer');
-            if (!container) return;
+        // Render Weight Table (Tabular view with +/- change indicators)
+        function renderWeightTable() {
+            const tbody = document.getElementById('weightHistoryTableBody');
+            const totalCountEl = document.getElementById('weightTotalCount');
+            if (!tbody) return;
 
-            // Sort weight entries by date
+            // Sort weight entries by date ascending
             const sortedWeights = [...weightHistory].sort((a, b) => a.date.localeCompare(b.date));
             const last7 = sortedWeights.slice(-7);
 
+            if (totalCountEl) totalCountEl.innerText = sortedWeights.length;
+
             if (last7.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-4 text-center text-xs text-slate-500 bg-slate-900 rounded-2xl border border-slate-800">Немає збережених замірів ваги</div>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="px-5 py-4 text-center text-xs text-slate-500 italic">Немає збережених замірів ваги</td></tr>`;
                 return;
             }
 
             let html = "";
             last7.forEach((item, index) => {
-                let diffHtml = '<span class="text-slate-500 font-medium text-xs">старт</span>';
+                let diffHtml = '<span class="text-slate-500 font-medium text-xs">базова точка</span>';
+                let statusBadge = '<span class="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-400">старт</span>';
+
                 if (index > 0) {
                     const prevWeight = last7[index - 1].weight;
                     const diff = Number((item.weight - prevWeight).toFixed(2));
                     if (diff > 0) {
                         // Up -> Red
-                        diffHtml = `<span class="text-rose-400 font-bold text-xs flex items-center justify-center gap-0.5"><i data-lucide="trending-up" class="w-3 h-3"></i> +${diff} кг</span>`;
+                        diffHtml = `<span class="text-rose-400 font-bold text-xs flex items-center gap-1"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +${diff} кг</span>`;
+                        statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] bg-rose-500/10 text-rose-400 border border-rose-500/20">+${diff} кг (приріст)</span>`;
                     } else if (diff < 0) {
                         // Down -> Green
-                        diffHtml = `<span class="text-emerald-400 font-bold text-xs flex items-center justify-center gap-0.5"><i data-lucide="trending-down" class="w-3 h-3"></i> ${diff} кг</span>`;
+                        diffHtml = `<span class="text-emerald-400 font-bold text-xs flex items-center gap-1"><i data-lucide="trending-down" class="w-3.5 h-3.5"></i> ${diff} кг</span>`;
+                        statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${diff} кг (зниження)</span>`;
                     } else {
                         diffHtml = `<span class="text-slate-400 font-medium text-xs">0.0 кг</span>`;
+                        statusBadge = `<span class="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300">без змін</span>`;
                     }
                 }
 
                 const dParts = item.date.split('-');
-                const shortDate = dParts.length === 3 ? `${dParts[2]}.${dParts[1]}` : item.date;
-
-                const isCurrentSelected = item.date === currentDate;
+                const formattedDate = dParts.length === 3 ? `${dParts[2]}.${dParts[1]}.${dParts[0]}` : item.date;
+                const isSelected = item.date === currentDate;
 
                 html += `
-                    <div class="p-3.5 rounded-2xl border ${isCurrentSelected ? 'bg-slate-800/90 border-emerald-500/50 shadow-lg shadow-emerald-950/40' : 'bg-slate-900 border-slate-800'} text-center space-y-1.5 transition">
-                        <div class="text-xs text-slate-400 font-semibold">${shortDate}</div>
-                        <div class="text-lg font-black text-slate-100">${item.weight} <span class="text-xs font-normal text-slate-400">кг</span></div>
-                        <div class="pt-0.5">${diffHtml}</div>
-                    </div>
+                    <tr class="hover:bg-slate-800/40 transition ${isSelected ? 'bg-emerald-500/5 font-semibold text-slate-100' : ''}">
+                        <td class="px-5 py-3.5 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-emerald-400' : 'bg-slate-600'}"></span>
+                            <span>${formattedDate}</span>
+                            ${isSelected ? '<span class="text-[10px] text-emerald-400 font-bold uppercase ml-1">(вибрано)</span>' : ''}
+                        </td>
+                        <td class="px-5 py-3.5 font-bold text-slate-100">${item.weight} <span class="text-xs font-normal text-slate-400">кг</span></td>
+                        <td class="px-5 py-3.5">${diffHtml}</td>
+                        <td class="px-5 py-3.5">${statusBadge}</td>
+                    </tr>
                 `;
             });
 
-            container.innerHTML = html;
+            tbody.innerHTML = html;
         }
 
         function updateCharts(p, f, c) {
+            // Chart 1: Donut Macros
             if (macroChartInstance) macroChartInstance.destroy();
             const macroCtx = document.getElementById('macroChart').getContext('2d');
             macroChartInstance = new Chart(macroCtx, {
@@ -622,6 +663,7 @@
                 }
             });
 
+            // Chart 2: Daily Hydration
             const dates = Object.keys(database).sort();
             const waterData = dates.map(d => {
                 const day = database[d];
@@ -629,23 +671,20 @@
                 if (day && day.meals) {
                     Object.values(day.meals).forEach(list => {
                         list.forEach(it => {
-                            const f = getHydrationFactor(it.name);
+                            const factor = getHydrationFactor(it.name);
                             let vol = it.volume || 0;
                             if (vol === 0 && it.name.toLowerCase().includes("кавун")) {
                                 const matchG = (it.weight || "").match(/\d+/);
                                 const g = matchG ? Number(matchG[0]) : 400;
                                 vol = Math.round(g * 0.92);
                             }
-                            eff += vol * (f === 0.92 ? 1.0 : f);
+                            eff += vol * (factor === 0.92 ? 1.0 : factor);
                         });
                     });
                 }
                 return Math.round(eff);
             });
 
-            const weightMap = {};
-            weightHistory.forEach(w => { weightMap[w.date] = w.weight; });
-            const weightData = dates.map(d => weightMap[d] || (database[d]?.weight || 76.7));
             const dateLabels = dates.map(d => d.split('-').slice(1).reverse().join('.'));
 
             if (waterChartInstance) waterChartInstance.destroy();
@@ -672,23 +711,29 @@
                 }
             });
 
+            // Chart 3: Weight Trend Chart — ONLY ACTUAL WEIGH-IN DATES!
+            const sortedWeights = [...weightHistory].sort((a, b) => a.date.localeCompare(b.date));
+            const weightLabels = sortedWeights.map(w => w.date.split('-').slice(1).reverse().join('.'));
+            const weightPoints = sortedWeights.map(w => w.weight);
+
             if (weightChartInstance) weightChartInstance.destroy();
             const weightCtx = document.getElementById('weightChart').getContext('2d');
             weightChartInstance = new Chart(weightCtx, {
                 type: 'line',
                 data: {
-                    labels: dateLabels,
+                    labels: weightLabels.length > 0 ? weightLabels : ['Немає замірів'],
                     datasets: [{
                         label: 'Вага (кг)',
-                        data: weightData,
+                        data: weightPoints.length > 0 ? weightPoints : [76.7],
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         fill: true,
-                        tension: 0.3,
+                        tension: 0.2,
                         pointBackgroundColor: '#10b981',
                         pointBorderColor: '#0f172a',
                         pointBorderWidth: 2,
-                        pointRadius: 5
+                        pointRadius: 6,
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
