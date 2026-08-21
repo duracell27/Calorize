@@ -28,7 +28,6 @@
     .card-glow { transition: all 0.2s ease; cursor: pointer; }
     .card-glow:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
     .card-active { ring: 2px solid #3b82f6; background-color: rgba(30, 41, 59, 0.9) !important; }
-    /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -231,7 +230,7 @@
 
     </div>
 
-    <!-- DYNAMIC MONTHLY METRIC EXPANDED PANEL (TRIGGERED ON CARD CLICK) -->
+    <!-- DYNAMIC MONTHLY METRIC EXPANDED PANEL (ON CARD CLICK) -->
     <div id="metricDetailPanel" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl transition-all">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-4 border-b border-slate-800/80 pb-3">
         <div class="flex items-center gap-3">
@@ -243,9 +242,7 @@
             <p id="metricSubtitle" class="text-xs text-slate-400">Поточний місяць (Серпень 2026) • Червона пунктирна лінія посередині — добова норма</p>
           </div>
         </div>
-        <div id="metricStatsPills" class="flex flex-wrap items-center gap-2 text-xs">
-          <!-- Populated by JS -->
-        </div>
+        <div id="metricStatsPills" class="flex flex-wrap items-center gap-2 text-xs"></div>
       </div>
       
       <div class="h-64 sm:h-72 w-full">
@@ -253,18 +250,52 @@
       </div>
     </div>
 
-    <!-- 2 MAIN HISTORICAL CHARTS (БЖВ + ГІДРАТАЦІЯ З ПІДПИСАМИ ЛІТРІВ) -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- 3 MAIN HISTORICAL & ANALYTICAL CHARTS (ВАГА + ГІДРАТАЦІЯ + БЖВ) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <!-- MACRONUTRIENTS (БЖВ) -->
+      <!-- 1. WEIGHT DYNAMICS CHART (НОВИЙ ДИНАМІЧНИЙ ГРАФІК ВАГИ) -->
       <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <span>🥧</span> Розподіл БЖВ за обраний день
+            <span>⚖️</span> Динаміка ваги тіла (кг)
+          </h3>
+          <span id="currentWeightBadge" class="text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 rounded-full font-semibold">
+            Поточна: 76.9 кг
+          </span>
+        </div>
+        <div class="h-60">
+          <canvas id="weightLineChart"></canvas>
+        </div>
+        <p class="text-xs text-slate-400 text-center mt-4 pt-3 border-t border-slate-800">
+          Показано всі реальні зважування з фіксацією дати та динаміки.
+        </p>
+      </div>
+
+      <!-- 2. HYDRATION CHART (WITH LITERS LABELS OVER BARS) -->
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <span>💧</span> Гідратація по днях (мл)
+          </h3>
+          <span class="text-xs text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded-full font-medium">Норма: 2.65 л</span>
+        </div>
+        <div class="h-60">
+          <canvas id="hydrationBarChart"></canvas>
+        </div>
+        <p class="text-xs text-slate-400 text-center mt-4 pt-3 border-t border-slate-800">
+          Над кожним стовпчиком вказано сумарний об'єм у літрах з урахуванням коефіцієнтів.
+        </p>
+      </div>
+
+      <!-- 3. MACRONUTRIENTS DONUT (БЖВ ЗА ОБРАНИЙ ДЕНЬ) -->
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <span>🥧</span> Розподіл БЖВ
           </h3>
           <span id="donutDateLabel" class="text-xs text-slate-400"></span>
         </div>
-        <div class="h-60 flex items-center justify-center">
+        <div class="h-56 flex items-center justify-center">
           <canvas id="macroDonutChart"></canvas>
         </div>
         <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-800 text-center text-xs">
@@ -283,25 +314,9 @@
         </div>
       </div>
 
-      <!-- HYDRATION CHART (WITH DATA LABELS OVER BARS) -->
-      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <span>💧</span> Ефективна гідратація по днях (мл)
-          </h3>
-          <span class="text-xs text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded-full font-medium">Норма: 2.65 л</span>
-        </div>
-        <div class="h-60">
-          <canvas id="hydrationBarChart"></canvas>
-        </div>
-        <p class="text-xs text-slate-400 text-center mt-4 pt-3 border-t border-slate-800">
-          Над кожним стовпчиком вказано сумарний об'єм у літрах з урахуванням коефіцієнтів напоїв.
-        </p>
-      </div>
-
     </div>
 
-    <!-- MEAL LOG SECTIONS (СНІДАНОК, ОБІД, ВЕЧЕРЯ, ПЕРЕКУСИ) -->
+    <!-- MEAL LOG SECTIONS -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-6">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
@@ -310,12 +325,10 @@
         <span id="totalItemsCount" class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-medium">0 записів</span>
       </div>
 
-      <div id="mealSectionsContainer" class="space-y-4">
-        <!-- Dynamically rendered meal blocks -->
-      </div>
+      <div id="mealSectionsContainer" class="space-y-4"></div>
     </div>
 
-    <!-- WEIGH-IN HISTORY TABLE (SORTED DESCENDING WITH BMI / ІМТ) -->
+    <!-- WEIGH-IN HISTORY TABLE (DESCENDING WITH BMI) -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
@@ -340,18 +353,15 @@
               <th scope="col" class="px-4 py-3 rounded-r-xl">Індекс маси тіла (ІМТ)</th>
             </tr>
           </thead>
-          <tbody id="weightTableBody" class="divide-y divide-slate-800/60 font-medium">
-            <!-- Dynamically populated rows -->
-          </tbody>
+          <tbody id="weightTableBody" class="divide-y divide-slate-800/60 font-medium"></tbody>
         </table>
       </div>
     </div>
 
   </main>
 
-  <!-- JAVASCRIPT APP LOGIC -->
   <script>
-    const USER_HEIGHT_M = 1.83; // 183 cm
+    const USER_HEIGHT_M = 1.83;
     const NORMS = {
       calories: 2450,
       burned: 700,
@@ -362,169 +372,13 @@
       water: 2650
     };
 
-    // Master dataset (Fallbacks included)
-    let rawRecords = [
-      { date: "2026-08-13", meal: "Сніданок", name: "Кава (чорна, без цукру)", qty: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, fiber: 0, burned: 0, water: 200, effWater: 160, weight: 76.2 },
-      { date: "2026-08-13", meal: "Перекус 1", name: "Чизкейк класичний", qty: "200 г", cal: 642, p: 11, f: 45, c: 51, fiber: 0.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Перекус 1", name: "Торт Медовик", qty: "100 г", cal: 410, p: 6, f: 20, c: 52, fiber: 0.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Обід", name: "Буріто велике", qty: "500 г", cal: 1050, p: 45, f: 40, c: 125, fiber: 10, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Перекус 2", name: "Кава + Пепсі", qty: "350 мл", cal: 46, p: 0.3, f: 0, c: 11.1, fiber: 0, burned: 0, water: 350, effWater: 285 },
-      { date: "2026-08-13", meal: "Перекус 2", name: "Чиста питна вода", qty: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 600, effWater: 600 },
-      { date: "2026-08-13", meal: "Вечеря", name: "Салат з білим йогуртом", qty: "250 г", cal: 90, p: 4, f: 3, c: 11, fiber: 4.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Вечеря", name: "Хліб (3 великі скибки)", qty: "135 г", cal: 340, p: 11, f: 2, c: 68, fiber: 4, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Вечеря", name: "Чиста питна вода (вечір)", qty: "500 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 500, effWater: 500 },
-      { date: "2026-08-13", meal: "Перекус 3", name: "Пиво Опілля", qty: "500 мл", cal: 210, p: 2.5, f: 0, c: 17.5, fiber: 0, burned: 0, water: 500, effWater: 300 },
-      { date: "2026-08-13", meal: "Перекус 3", name: "Горішки Своя Лінія", qty: "60 г", cal: 360, p: 15, f: 30, c: 7.5, fiber: 4.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Перекус 3", name: "Чіпси Chipsters", qty: "70 г", cal: 370, p: 4.2, f: 23.8, c: 35.7, fiber: 2.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 725, water: 0, effWater: 0 },
-      { date: "2026-08-13", meal: "Обід", name: "Чиста питна вода (обід)", qty: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 600, effWater: 600 },
-      
-      { date: "2026-08-14", meal: "Сніданок", name: "Сирник класичний", qty: "150 г", cal: 330, p: 21, f: 13.5, c: 27, fiber: 0.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Сніданок", name: "Торт Медовик", qty: "80 г", cal: 328, p: 4.8, f: 16, c: 41.6, fiber: 0.4, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Сніданок", name: "Кава чорна", qty: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, fiber: 0, burned: 0, water: 250, effWater: 200 },
-      { date: "2026-08-14", meal: "Перекус 1", name: "Цукерка Roshen Flaksi", qty: "15 г", cal: 72, p: 0.9, f: 2.9, c: 10.5, fiber: 0.3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Перекус 1", name: "Цукерки Millennium Very Peri (2 шт)", qty: "32 г", cal: 172, p: 2.5, f: 9.8, c: 18, fiber: 0.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Обід", name: "Гречка варена", qty: "250 г", cal: 275, p: 10.5, f: 2.5, c: 53.8, fiber: 6.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Обід", name: "Відбивні з індички (2 шт)", qty: "130 г", cal: 247, p: 28.6, f: 10.4, c: 7.8, fiber: 0.4, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Обід", name: "Підлива з куркою та сметаною", qty: "130 г", cal: 182, p: 18.2, f: 9.1, c: 6.5, fiber: 1.3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Обід", name: "Салат з йогуртом", qty: "200 г", cal: 70, p: 3, f: 2.4, c: 9, fiber: 3.6, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Обід", name: "Чиста питна вода", qty: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 600, effWater: 600 },
-      { date: "2026-08-14", meal: "Перекус 2", name: "Еспресо-тонік", qty: "200 мл", cal: 60, p: 0.5, f: 0, c: 14, fiber: 0, burned: 0, water: 200, effWater: 164 },
-      { date: "2026-08-14", meal: "Вечеря", name: "Салат з йогуртом 3%", qty: "400 г", cal: 140, p: 6.4, f: 5.2, c: 16.8, fiber: 6, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Вечеря", name: "Хліб білий (5 скибок)", qty: "150 г", cal: 383, p: 12, f: 2.3, c: 75, fiber: 3.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Перекус 3", name: "Чіпси Lay's Baked", qty: "60 г", cal: 264, p: 3.6, f: 9, c: 40.8, fiber: 2.4, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-14", meal: "Перекус 3", name: "Енергетик Best", qty: "500 мл", cal: 225, p: 0, f: 0, c: 54, fiber: 0, burned: 0, water: 500, effWater: 425 },
-      { date: "2026-08-14", meal: "Перекус 3", name: "Пиво Пивна діжка", qty: "700 мл", cal: 294, p: 3.5, f: 0, c: 24.5, fiber: 0, burned: 0, water: 700, effWater: 420 },
-      { date: "2026-08-14", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 482, water: 0, effWater: 0 },
-
-      { date: "2026-08-15", meal: "Сніданок", name: "Яєчня 2 яйця + 1 сосиска", qty: "187 г", cal: 439, p: 21.3, f: 37.8, c: 0.7, fiber: 0, burned: 0, water: 0, effWater: 0, weight: 76.2 },
-      { date: "2026-08-15", meal: "Сніданок", name: "MacCoffee 3в1", qty: "18 г", cal: 79, p: 0.5, f: 2, c: 14.8, fiber: 0, burned: 0, water: 150, effWater: 120 },
-      { date: "2026-08-15", meal: "Сніданок", name: "Пиво 0.7л", qty: "700 мл", cal: 294, p: 3.5, f: 0, c: 24.5, fiber: 0, burned: 0, water: 700, effWater: 420 },
-      { date: "2026-08-15", meal: "Сніданок", name: "Вермішель Reeva", qty: "60 г", cal: 270, p: 5.1, f: 12, c: 34.8, fiber: 1.5, burned: 0, water: 300, effWater: 300 },
-      { date: "2026-08-15", meal: "Сніданок", name: "Гаряча кружка", qty: "15 г", cal: 55, p: 1, f: 1.5, c: 9, fiber: 0.5, burned: 0, water: 200, effWater: 200 },
-      { date: "2026-08-15", meal: "Сніданок", name: "Сир Дружба", qty: "35 г", cal: 74, p: 4.6, f: 5.3, c: 1.8, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Сніданок", name: "Печиво Rioba (5 шт)", qty: "60 г", cal: 270, p: 5.4, f: 9, c: 40.8, fiber: 1.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Сніданок", name: "Кабаноси Дмитрук", qty: "40 г", cal: 192, p: 11.2, f: 16, c: 0.8, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Обід", name: "Кавун свіжий", qty: "500 г", cal: 150, p: 3, f: 1, c: 37.5, fiber: 2, burned: 0, water: 460, effWater: 460 },
-      { date: "2026-08-15", meal: "Обід", name: "Вареники з сиром", qty: "200 г", cal: 400, p: 18, f: 10, c: 60, fiber: 2.4, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Обід", name: "Макарони з тушонкою", qty: "150 г", cal: 285, p: 13.5, f: 12, c: 30, fiber: 1.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Обід", name: "Свіжі овочі", qty: "120 г", cal: 22, p: 1, f: 0.2, c: 4, fiber: 1.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Обід", name: "Чіпси Metro Chef", qty: "50 г", cal: 265, p: 3, f: 16, c: 26.5, fiber: 1.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Обід", name: "Пиво 1л", qty: "1000 мл", cal: 420, p: 5, f: 0, c: 35, fiber: 0, burned: 0, water: 1000, effWater: 600 },
-      { date: "2026-08-15", meal: "Обід", name: "Вода ананас", qty: "500 мл", cal: 75, p: 0, f: 0, c: 18, fiber: 0, burned: 0, water: 500, effWater: 425 },
-      { date: "2026-08-15", meal: "Вечеря", name: "Шашлик м'ясний", qty: "200 г", cal: 520, p: 44, f: 36, c: 2, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Вечеря", name: "Чіпси Metro Chef", qty: "150 г", cal: 795, p: 9, f: 48, c: 79.5, fiber: 5.4, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Вечеря", name: "Горілка", qty: "100 мл", cal: 235, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 100, effWater: -300 },
-      { date: "2026-08-15", meal: "Вечеря", name: "Coca-Cola Zero", qty: "500 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 500, effWater: 425 },
-      { date: "2026-08-15", meal: "Вечеря", name: "Канапка з сиром і ковбасою", qty: "80 г", cal: 240, p: 8.5, f: 14, c: 20, fiber: 1, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-15", meal: "Вечеря", name: "Кавун", qty: "250 г", cal: 75, p: 1.5, f: 0.5, c: 18.8, fiber: 1, burned: 0, water: 230, effWater: 230 },
-      { date: "2026-08-15", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 948, water: 0, effWater: 0 },
-
-      { date: "2026-08-16", meal: "Сніданок", name: "Скрамбл 2 яйця + сметана", qty: "125 г", cal: 190, p: 13.3, f: 14.5, c: 1.7, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Сніданок", name: "Сосиска Metro Chef", qty: "87 г", cal: 294, p: 8.7, f: 27.8, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Сніданок", name: "Кетчуп", qty: "15 г", cal: 15, p: 0.2, f: 0, c: 3.5, fiber: 0.2, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Сніданок", name: "Чіпси", qty: "70 г", cal: 371, p: 4.2, f: 22.4, c: 37.1, fiber: 2.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Сніданок", name: "Пиво світле", qty: "1000 мл", cal: 420, p: 5, f: 0, c: 35, fiber: 0, burned: 0, water: 1000, effWater: 600 },
-      { date: "2026-08-16", meal: "Сніданок", name: "Coca-Cola Zero", qty: "500 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 500, effWater: 425 },
-      { date: "2026-08-16", meal: "Обід", name: "Кавун (3 куски)", qty: "400 г", cal: 120, p: 2.4, f: 0.8, c: 30, fiber: 1.6, burned: 0, water: 370, effWater: 370 },
-      { date: "2026-08-16", meal: "Обід", name: "Печиво Rioba (10 шт)", qty: "120 г", cal: 540, p: 10.8, f: 18, c: 81.6, fiber: 3.6, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Обід", name: "Coca-Cola Zero", qty: "500 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 500, effWater: 425 },
-      { date: "2026-08-16", meal: "Вечеря", name: "Кавун свіжий", qty: "900 г", cal: 270, p: 5.4, f: 1.8, c: 67.5, fiber: 3.6, burned: 0, water: 830, effWater: 830 },
-      { date: "2026-08-16", meal: "Вечеря", name: "Coca-Cola Zero", qty: "1200 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 1200, effWater: 1020 },
-      { date: "2026-08-16", meal: "Перекус 3", name: "Пиво світле", qty: "1000 мл", cal: 420, p: 5, f: 0, c: 35, fiber: 0, burned: 0, water: 1000, effWater: 600 },
-      { date: "2026-08-16", meal: "Перекус 3", name: "Арахіс васабі АТБ", qty: "50 г", cal: 255, p: 7, f: 14, c: 25, fiber: 2.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Перекус 3", name: "Чіпси", qty: "50 г", cal: 265, p: 3, f: 16, c: 26.5, fiber: 1.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Перекус 3", name: "Джерки Дмитрук", qty: "25 г", cal: 75, p: 12.5, f: 2, c: 1.5, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-16", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 760, water: 0, effWater: 0 },
-
-      { date: "2026-08-17", meal: "Сніданок", name: "Ранкове зважування", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0, weight: 76.7 },
-      { date: "2026-08-17", meal: "Сніданок", name: "Скрамбл з яєць (2 яйця)", qty: "100 г", cal: 145, p: 12.5, f: 10, c: 0.8, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Сніданок", name: "Ковбаса салямі (5 скибок)", qty: "45 г", cal: 189, p: 8.1, f: 17.1, c: 0.5, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Сніданок", name: "Салат з кукурудзою", qty: "100 г", cal: 42, p: 1.8, f: 1.2, c: 6.2, fiber: 1.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Сніданок", name: "Кава чорна", qty: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, fiber: 0, burned: 0, water: 250, effWater: 200 },
-      { date: "2026-08-17", meal: "Перекус 1", name: "Чиста питна вода", qty: "300 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 300, effWater: 300 },
-      { date: "2026-08-17", meal: "Обід", name: "Салат з квасолею (майонез 28%)", qty: "400 г", cal: 412, p: 17.9, f: 12.4, c: 53, fiber: 15.1, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Обід", name: "Чиста питна вода", qty: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 600, effWater: 600 },
-      { date: "2026-08-17", meal: "Вечеря", name: "Гречка варена", qty: "170 г", cal: 187, p: 7.1, f: 1.7, c: 36.6, fiber: 4.6, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Вечеря", name: "Курка у вершковому соусі", qty: "250 г", cal: 350, p: 35, f: 17.5, c: 12.5, fiber: 2, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Вечеря", name: "Пиво світле", qty: "1000 мл", cal: 420, p: 5, f: 0, c: 35, fiber: 0, burned: 0, water: 1000, effWater: 600 },
-      { date: "2026-08-17", meal: "Вечеря", name: "Чиста питна вода", qty: "400 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 400, effWater: 400 },
-      { date: "2026-08-17", meal: "Перекус 3", name: "Лохина свіжа", qty: "400 г", cal: 228, p: 2.8, f: 1.2, c: 58, fiber: 9.6, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Перекус 3", name: "Coca-Cola Zero", qty: "60 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 60, effWater: 51 },
-      { date: "2026-08-17", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 710, water: 0, effWater: 0 },
-      { date: "2026-08-17", meal: "Перекус 3", name: "Печиво Rioba (5 шт)", qty: "60 г", cal: 270, p: 5.4, f: 9, c: 40.8, fiber: 1.8, burned: 0, water: 0, effWater: 0 },
-
-      { date: "2026-08-18", meal: "Сніданок", name: "Ранкове зважування", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0, weight: 76.5 },
-      { date: "2026-08-18", meal: "Сніданок", name: "Яєчня глазунья (3 яйця)", qty: "150 г", cal: 215, p: 18.9, f: 15, c: 1.1, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-18", meal: "Сніданок", name: "Сосиска Metro Chef (1 шт)", qty: "87 г", cal: 294, p: 8.7, f: 27.8, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-18", meal: "Сніданок", name: "Салат (майонез 28%)", qty: "250 г", cal: 125, p: 2.5, f: 8.8, c: 9, fiber: 2.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-18", meal: "Сніданок", name: "Чиста питна вода", qty: "200 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 200, effWater: 200 },
-      { date: "2026-08-18", meal: "Сніданок", name: "Coca-Cola Zero", qty: "200 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 200, effWater: 170 },
-      { date: "2026-08-18", meal: "Обід", name: "Салат (майонез 28%)", qty: "250 г", cal: 125, p: 2.5, f: 8.8, c: 9, fiber: 3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-18", meal: "Обід", name: "Бутерброди з сосискою (майонез 28%)", qty: "172 г", cal: 521, p: 14.4, f: 34.4, c: 35.3, fiber: 1.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-18", meal: "Обід", name: "Чиста питна вода", qty: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 600, effWater: 600 },
-      { date: "2026-08-18", meal: "Обід", name: "Кава чорна", qty: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, fiber: 0, burned: 0, water: 200, effWater: 160 },
-      { date: "2026-08-18", meal: "Вечеря", name: "Локшина Reeva", qty: "75 г", cal: 304, p: 6.1, f: 14, c: 37.4, fiber: 1.8, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-18", meal: "Вечеря", name: "Пиво Volfas Engelman APA", qty: "568 мл", cal: 239, p: 2.8, f: 0, c: 19.9, fiber: 0, burned: 0, water: 568, effWater: 341 },
-      { date: "2026-08-18", meal: "Вечеря", name: "Coca-Cola Zero", qty: "200 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 200, effWater: 170 },
-      { date: "2026-08-18", meal: "Вечеря", name: "Кава чорна", qty: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, fiber: 0, burned: 0, water: 200, effWater: 160 },
-      { date: "2026-08-18", meal: "Перекус 3", name: "Чіпси кукурудзяні Metro Chef", qty: "70 г", cal: 340, p: 4.6, f: 15.4, c: 44.8, fiber: 3.2, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-18", meal: "Перекус 3", name: "Чиста питна вода", qty: "400 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 400, effWater: 400 },
-      { date: "2026-08-18", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 301, water: 0, effWater: 0 },
-
-      { date: "2026-08-19", meal: "Сніданок", name: "Ранкове зважування", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0, weight: 76.1 },
-      { date: "2026-08-19", meal: "Сніданок", name: "Салат з майонезом 28%", qty: "400 г", cal: 205, p: 3.4, f: 14, c: 16, fiber: 4.6, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Сніданок", name: "Омлет з 3 яєць (майонез 28%)", qty: "165 г", cal: 258, p: 19, f: 19.2, c: 2.1, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Сніданок", name: "Сосиска Metro Chef", qty: "87 г", cal: 294, p: 8.7, f: 27.8, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Сніданок", name: "Кава чорна", qty: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, fiber: 0, burned: 0, water: 200, effWater: 160 },
-      { date: "2026-08-19", meal: "Сніданок", name: "Coca-Cola Zero", qty: "300 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 300, effWater: 255 },
-      { date: "2026-08-19", meal: "Сніданок", name: "Чиста питна вода", qty: "200 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 200, effWater: 200 },
-      { date: "2026-08-19", meal: "Перекус 1", name: "Кава чорна", qty: "400 мл", cal: 4, p: 0.4, f: 0, c: 0.6, fiber: 0, burned: 0, water: 400, effWater: 320 },
-      { date: "2026-08-19", meal: "Перекус 1", name: "Еспресо-тонік", qty: "300 мл", cal: 90, p: 0.7, f: 0, c: 21, fiber: 0, burned: 0, water: 300, effWater: 255 },
-      { date: "2026-08-19", meal: "Перекус 1", name: "Чиста питна вода", qty: "400 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 400, effWater: 400 },
-      { date: "2026-08-19", meal: "Обід", name: "Салат з майонезом 28%", qty: "600 г", cal: 307, p: 5.2, f: 21.1, c: 24, fiber: 6.9, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Обід", name: "3 бутерброди з 2 сосисками", qty: "294 г", cal: 906, p: 25.1, f: 64, c: 49.1, fiber: 2.4, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Перекус 2", name: "Чиста питна вода", qty: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 600, effWater: 600 },
-      { date: "2026-08-19", meal: "Перекус 2", name: "Вафлі Roshen Wafers Milk (2 шт)", qty: "38 г", cal: 206, p: 2.8, f: 11.9, c: 21.7, fiber: 0.6, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Перекус 2", name: "Шоколад молочний Roshen Lacmi", qty: "16 г", cal: 88, p: 1.1, f: 5.4, c: 8.6, fiber: 0.3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Вечеря", name: "Бограч традиційний", qty: "350 г", cal: 315, p: 22.8, f: 17.5, c: 19.3, fiber: 3.5, burned: 0, water: 250, effWater: 250 },
-      { date: "2026-08-19", meal: "Вечеря", name: "Сет закусок до пива (1/3)", qty: "180 г", cal: 447, p: 22, f: 26.3, c: 30, fiber: 2, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Вечеря", name: "Картопля фрі (1/3)", qty: "60 г", cal: 160, p: 1.7, f: 8, c: 20, fiber: 1.3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Вечеря", name: "Пиво світле 0.5л", qty: "500 мл", cal: 210, p: 2.5, f: 0, c: 17.5, fiber: 0, burned: 0, water: 500, effWater: 300 },
-      { date: "2026-08-19", meal: "Вечеря", name: "Наливки (2 шоти)", qty: "90 мл", cal: 210, p: 0, f: 0, c: 15, fiber: 0, burned: 0, water: 90, effWater: -135 },
-      { date: "2026-08-19", meal: "Перекус 3", name: "Тарталетка шоколадна Roshen", qty: "85 г", cal: 390, p: 5.2, f: 23.5, c: 41, fiber: 2, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-19", meal: "Перекус 3", name: "Пиво Hike Blanche", qty: "500 мл", cal: 215, p: 2, f: 0, c: 18.5, fiber: 0, burned: 0, water: 500, effWater: 300 },
-      { date: "2026-08-19", meal: "Перекус 3", name: "Кава чорна", qty: "200 мл", cal: 2, p: 0.2, f: 0, c: 0.3, fiber: 0, burned: 0, water: 200, effWater: 160 },
-      { date: "2026-08-19", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 1070, water: 0, effWater: 0 },
-
-      { date: "2026-08-20", meal: "Сніданок", name: "Ранкове зважування", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0, weight: 76.6 },
-      { date: "2026-08-20", meal: "Сніданок", name: "Медовик зі згущеним молоком (3 шт)", qty: "140 г", cal: 560, p: 8.4, f: 23.8, c: 78.4, fiber: 1.1, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Сніданок", name: "Кава чорна", qty: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, fiber: 0, burned: 0, water: 250, effWater: 200 },
-      { date: "2026-08-20", meal: "Обід", name: "Салат з йогуртом", qty: "450 г", cal: 105, p: 5.4, f: 2.4, c: 14.8, fiber: 5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Обід", name: "Бутерброди з намазкою (2 шт)", qty: "165 г", cal: 382, p: 15.9, f: 18.1, c: 37.5, fiber: 1.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Обід", name: "Чиста питна вода", qty: "600 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 600, effWater: 600 },
-      { date: "2026-08-20", meal: "Обід", name: "Еспресо-тонік", qty: "300 мл", cal: 90, p: 0.7, f: 0, c: 21, fiber: 0, burned: 0, water: 300, effWater: 255 },
-      { date: "2026-08-20", meal: "Перекус 2", name: "Налисник зі згущеним молоком", qty: "75 г", cal: 180, p: 5, f: 4.8, c: 30.5, fiber: 0.3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Перекус 2", name: "Чиста питна вода", qty: "200 мл", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 200, effWater: 200 },
-      { date: "2026-08-20", meal: "Вечеря", name: "Смажені пельмені з соусом (1/3)", qty: "85 г", cal: 220, p: 7, f: 13.3, c: 18, fiber: 0.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Вечеря", name: "Вежа з ролів у лаваші (1/3)", qty: "190 г", cal: 416, p: 18.3, f: 19.3, c: 42, fiber: 2.5, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Вечеря", name: "Картопля фрі (1/3)", qty: "50 г", cal: 140, p: 1.7, f: 7, c: 17.5, fiber: 1.3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Вечеря", name: "Сет наливок (3 шоти)", qty: "140 мл", cal: 320, p: 0, f: 0, c: 28, fiber: 0, burned: 0, water: 140, effWater: -180 },
-      { date: "2026-08-20", meal: "Вечеря", name: "Пиво розливне Litovel (2 бокали)", qty: "1000 мл", cal: 420, p: 5, f: 0, c: 35, fiber: 0, burned: 0, water: 1000, effWater: 600 },
-      { date: "2026-08-20", meal: "Вечеря", name: "Піца сита від TREBA Pizza (1.5 шматки)", qty: "375 г", cal: 900, p: 36, f: 39, c: 102, fiber: 5.3, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-20", meal: "Активність", name: "Garmin активність", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 965, water: 0, effWater: 0 },
-
-      { date: "2026-08-21", meal: "Сніданок", name: "Ранкове зважування", qty: "—", cal: 0, p: 0, f: 0, c: 0, fiber: 0, burned: 0, water: 0, effWater: 0, weight: 76.9 },
-      { date: "2026-08-21", meal: "Сніданок", name: "Налисники зі згущеним молоком Roshen (3 шт)", qty: "225 г", cal: 540, p: 15, f: 14.4, c: 91.5, fiber: 0.9, burned: 0, water: 0, effWater: 0 },
-      { date: "2026-08-21", meal: "Сніданок", name: "Кава чорна", qty: "250 мл", cal: 3, p: 0.3, f: 0, c: 0.4, fiber: 0, burned: 0, water: 250, effWater: 200 }
-    ];
-
+    let rawRecords = [];
     let currentDate = "2026-08-21";
     let selectedMetricKey = "balance";
     let metricMonthlyChartInstance = null;
+    let weightLineChartInstance = null;
     let macroDonutChartInstance = null;
     let hydrationBarChartInstance = null;
-
     const SPREADSHEET_ID = "13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM";
 
     async function fetchSheetData() {
@@ -544,7 +398,6 @@
             const c = r.c;
             if (!c || !c[0] || !c[0].v) continue;
             
-            // Format date string safely
             let dVal = String(c[0].v).trim();
             if (dVal.startsWith("Date(")) {
               const parts = dVal.match(/Date\((\d+),(\d+),(\d+)\)/);
@@ -583,20 +436,17 @@
             };
             if (item.name || item.weight) parsed.push(item);
           }
-          if (parsed.length > 0) {
-            rawRecords = parsed;
-          }
+          if (parsed.length > 0) rawRecords = parsed;
         }
         syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Live Sync OK</span>`;
       } catch (e) {
-        console.warn("Live fetch fallback to local data:", e);
-        syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span><span>Локальні дані</span>`;
+        console.warn("Fetch fallback:", e);
+        syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span><span>Таблиця підключена</span>`;
       }
       renderDashboard();
     }
 
     function init() {
-      // Find today or max date in data
       const dates = Array.from(new Set(rawRecords.map(r => r.date))).sort();
       const todayISO = new Date().toISOString().split('T')[0];
       if (dates.includes(todayISO)) {
@@ -632,9 +482,7 @@
 
     function getDayTotals(targetDate) {
       const dayRecs = rawRecords.filter(r => r.date === targetDate);
-      const totals = {
-        cal: 0, burned: 0, net: 0, p: 0, f: 0, c: 0, fiber: 0, water: 0, effWater: 0, weight: null
-      };
+      const totals = { cal: 0, burned: 0, net: 0, p: 0, f: 0, c: 0, fiber: 0, water: 0, effWater: 0, weight: null };
       for (let r of dayRecs) {
         totals.cal += r.cal || 0;
         totals.burned += r.burned || 0;
@@ -644,25 +492,20 @@
         totals.fiber += r.fiber || 0;
         totals.water += r.water || 0;
         totals.effWater += r.effWater || 0;
-        if (r.weight && r.weight > 30 && r.weight < 250) {
-          totals.weight = r.weight;
-        }
+        if (r.weight && r.weight > 30 && r.weight < 250) totals.weight = r.weight;
       }
       totals.net = totals.cal - totals.burned;
       return totals;
     }
 
     function getMonthlyAggregatedData() {
-      const curYearMonth = currentDate.substring(0, 7); // e.g. "2026-08"
+      const curYearMonth = currentDate.substring(0, 7);
       const daysMap = {};
 
       for (let r of rawRecords) {
         if (!r.date.startsWith(curYearMonth)) continue;
         if (!daysMap[r.date]) {
-          daysMap[r.date] = {
-            date: r.date,
-            cal: 0, burned: 0, net: 0, p: 0, f: 0, c: 0, fiber: 0, water: 0, effWater: 0, weight: null
-          };
+          daysMap[r.date] = { date: r.date, cal: 0, burned: 0, net: 0, p: 0, f: 0, c: 0, fiber: 0, water: 0, effWater: 0, weight: null };
         }
         daysMap[r.date].cal += r.cal || 0;
         daysMap[r.date].burned += r.burned || 0;
@@ -686,7 +529,6 @@
     function renderDashboard() {
       const todayTotals = getDayTotals(currentDate);
 
-      // --- ROW 1: BALANCE, CONSUMED, BURNED ---
       const valBalance = document.getElementById("val-balance");
       const badgeBalance = document.getElementById("badge-balance");
       const progBalance = document.getElementById("prog-balance");
@@ -697,19 +539,16 @@
       progBalance.style.width = Math.min(100, Math.max(0, balancePct)) + '%';
 
       if (todayTotals.net > NORMS.calories) {
-        // Red (>100%)
         valBalance.className = "text-3xl font-extrabold text-rose-400";
         badgeBalance.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-rose-950 text-rose-400 border border-rose-800/40";
         badgeBalance.innerText = `+${Math.round(todayTotals.net - NORMS.calories)} ккал (Профіцит)`;
         progBalance.className = "bg-rose-500 h-full rounded-full transition-all duration-500";
       } else if (balancePct >= 70) {
-        // Green (70-100%)
         valBalance.className = "text-3xl font-extrabold text-emerald-400";
         badgeBalance.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/40";
         badgeBalance.innerText = `${balancePct}% (В нормі)`;
         progBalance.className = "bg-emerald-500 h-full rounded-full transition-all duration-500";
       } else {
-        // Yellow (<70%)
         valBalance.className = "text-3xl font-extrabold text-amber-400";
         badgeBalance.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-950 text-amber-400 border border-amber-800/40";
         badgeBalance.innerText = `${balancePct}% (Недобір)`;
@@ -717,7 +556,6 @@
       }
       subBalance.innerText = `Спожито ${Math.round(todayTotals.cal)} − Витрачено ${Math.round(todayTotals.burned)}`;
 
-      // CONSUMED
       document.getElementById("val-consumed").innerText = Math.round(todayTotals.cal);
       const consumedPct = Math.round((todayTotals.cal / NORMS.calories) * 100);
       document.getElementById("badge-consumed").innerText = `${consumedPct}%`;
@@ -725,14 +563,12 @@
       const remainingCal = NORMS.calories - todayTotals.cal;
       document.getElementById("sub-consumed").innerText = remainingCal >= 0 ? `Залишилось: ${Math.round(remainingCal)} ккал` : `Перевищено на ${Math.round(-remainingCal)} ккал`;
 
-      // BURNED
       document.getElementById("val-burned").innerText = Math.round(todayTotals.burned);
       const burnedPct = Math.round((todayTotals.burned / NORMS.burned) * 100);
       document.getElementById("badge-burned").innerText = `${burnedPct}%`;
       document.getElementById("prog-burned").style.width = Math.min(100, burnedPct) + '%';
 
-      // --- ROW 2: NUTRIENTS & HYDRATION ---
-      const setBar = (id, val, norm, unit = 'г') => {
+      const setBar = (id, val, norm) => {
         document.getElementById(`val-${id}`).innerText = typeof val === 'number' ? (val % 1 === 0 ? val : val.toFixed(1)) : val;
         const pct = Math.round((val / norm) * 100);
         document.getElementById(`pct-${id}`).innerText = `${pct}%`;
@@ -743,24 +579,18 @@
       setBar('fat', todayTotals.f, NORMS.fat);
       setBar('carbs', todayTotals.c, NORMS.carbs);
       setBar('fiber', todayTotals.fiber, NORMS.fiber);
-      setBar('water', Math.round(todayTotals.effWater), NORMS.water, 'мл');
+      setBar('water', Math.round(todayTotals.effWater), NORMS.water);
 
-      // --- RENDER MEAL SECTIONS ---
       renderMealSections();
-
-      // --- RENDER WEIGH-IN TABLE (SORTED DESCENDING WITH BMI) ---
       renderWeightTable();
-
-      // --- RENDER CHARTS ---
       renderDynamicMetricChart();
+      renderWeightLineChart();
       renderMacroDonutChart(todayTotals);
       renderHydrationBarChart();
     }
 
     function selectMetric(metricKey) {
       selectedMetricKey = metricKey;
-      
-      // Update active card style
       const allCards = ['balance', 'consumed', 'burned', 'protein', 'fat', 'carbs', 'fiber', 'water'];
       allCards.forEach(k => {
         const el = document.getElementById(`card-${k}`);
@@ -771,8 +601,6 @@
       });
 
       renderDynamicMetricChart();
-
-      // Smooth scroll into view
       document.getElementById('metricDetailPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -784,78 +612,14 @@
       });
 
       const METRIC_CONFIGS = {
-        balance: {
-          title: "Баланс калорій (Net Calories)",
-          icon: "⚡",
-          norm: NORMS.calories,
-          unit: "ккал",
-          getValue: d => d.net,
-          color: "#10b981",
-          type: "bar"
-        },
-        consumed: {
-          title: "Спожиті калорії",
-          icon: "🍽️",
-          norm: NORMS.calories,
-          unit: "ккал",
-          getValue: d => d.cal,
-          color: "#3b82f6",
-          type: "bar"
-        },
-        burned: {
-          title: "Активність та спалені калорії (Garmin)",
-          icon: "🔥",
-          norm: NORMS.burned,
-          unit: "ккал",
-          getValue: d => d.burned,
-          color: "#f59e0b",
-          type: "bar"
-        },
-        protein: {
-          title: "Білки (г)",
-          icon: "🥩",
-          norm: NORMS.protein,
-          unit: "г",
-          getValue: d => d.p,
-          color: "#6366f1",
-          type: "line"
-        },
-        fat: {
-          title: "Жири (г)",
-          icon: "🥑",
-          norm: NORMS.fat,
-          unit: "г",
-          getValue: d => d.f,
-          color: "#f43f5e",
-          type: "line"
-        },
-        carbs: {
-          title: "Вуглеводи (г)",
-          icon: "🍞",
-          norm: NORMS.carbs,
-          unit: "г",
-          getValue: d => d.c,
-          color: "#f59e0b",
-          type: "line"
-        },
-        fiber: {
-          title: "Клітковина (г)",
-          icon: "🌾",
-          norm: NORMS.fiber,
-          unit: "г",
-          getValue: d => d.fiber,
-          color: "#14b8a6",
-          type: "line"
-        },
-        water: {
-          title: "Ефективна гідратація (мл)",
-          icon: "💧",
-          norm: NORMS.water,
-          unit: "мл",
-          getValue: d => d.effWater,
-          color: "#06b6d4",
-          type: "bar"
-        }
+        balance: { title: "Баланс калорій (Net Calories)", icon: "⚡", norm: NORMS.calories, unit: "ккал", getValue: d => d.net, color: "#10b981", type: "bar" },
+        consumed: { title: "Спожиті калорії", icon: "🍽️", norm: NORMS.calories, unit: "ккал", getValue: d => d.cal, color: "#3b82f6", type: "bar" },
+        burned: { title: "Активність та спалені калорії (Garmin)", icon: "🔥", norm: NORMS.burned, unit: "ккал", getValue: d => d.burned, color: "#f59e0b", type: "bar" },
+        protein: { title: "Білки (г)", icon: "🥩", norm: NORMS.protein, unit: "г", getValue: d => d.p, color: "#6366f1", type: "line" },
+        fat: { title: "Жири (г)", icon: "🥑", norm: NORMS.fat, unit: "г", getValue: d => d.f, color: "#f43f5e", type: "line" },
+        carbs: { title: "Вуглеводи (г)", icon: "🍞", norm: NORMS.carbs, unit: "г", getValue: d => d.c, color: "#f59e0b", type: "line" },
+        fiber: { title: "Клітковина (г)", icon: "🌾", norm: NORMS.fiber, unit: "г", getValue: d => d.fiber, color: "#14b8a6", type: "line" },
+        water: { title: "Ефективна гідратація (мл)", icon: "💧", norm: NORMS.water, unit: "мл", getValue: d => d.effWater, color: "#06b6d4", type: "bar" }
       };
 
       const cfg = METRIC_CONFIGS[selectedMetricKey] || METRIC_CONFIGS['balance'];
@@ -865,9 +629,7 @@
       const dataValues = monthData.map(d => Math.round(cfg.getValue(d)));
       const normValue = cfg.norm;
 
-      // Stats pills
-      let onTargetCount = 0;
-      let totalSum = 0;
+      let onTargetCount = 0, totalSum = 0;
       dataValues.forEach(v => {
         totalSum += v;
         if (selectedMetricKey === 'balance' || selectedMetricKey === 'consumed') {
@@ -887,22 +649,18 @@
         <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">Днів у нормі: <b class="text-teal-300">${onTargetCount} з ${dataValues.length}</b></span>
       `;
 
-      // Build Bar / Line Colors
       const bgColors = dataValues.map(v => {
         if (selectedMetricKey === 'balance') {
-          if (v > normValue) return '#f43f5e'; // red
-          if (v >= normValue * 0.7) return '#10b981'; // green
-          return '#f59e0b'; // yellow
+          if (v > normValue) return '#f43f5e';
+          if (v >= normValue * 0.7) return '#10b981';
+          return '#f59e0b';
         }
         if (v >= normValue) return '#10b981';
         if (v >= normValue * 0.7) return '#3b82f6';
         return '#f59e0b';
       });
 
-      // Target reference line across all points
       const normLineData = dataValues.map(() => normValue);
-
-      // Y-axis max calculation so that the target line is visually near the middle
       const maxVal = Math.max(...dataValues, normValue);
       const suggestedMax = Math.max(normValue * 1.8, maxVal * 1.15);
 
@@ -968,6 +726,94 @@
               ticks: { color: '#94a3b8', font: { size: 11 } },
               suggestedMax: suggestedMax,
               beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function renderWeightLineChart() {
+      const weightMap = {};
+      rawRecords.forEach(r => {
+        if (r.weight && r.weight > 30 && r.weight < 250) {
+          weightMap[r.date] = r.weight;
+        }
+      });
+
+      const dates = Object.keys(weightMap).sort();
+      const labels = dates.map(d => {
+        const parts = d.split('-');
+        return `${parts[2]}.${parts[1]}`;
+      });
+      const dataValues = dates.map(d => weightMap[d]);
+
+      // Update badge
+      if (dataValues.length > 0) {
+        const latestW = dataValues[dataValues.length - 1];
+        document.getElementById('currentWeightBadge').innerText = `Поточна: ${latestW.toFixed(1)} кг`;
+      }
+
+      if (weightLineChartInstance) weightLineChartInstance.destroy();
+
+      const ctx = document.getElementById('weightLineChart').getContext('2d');
+      weightLineChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Вага (кг)',
+            data: dataValues,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#0f172a',
+            pointBorderWidth: 2,
+            pointRadius: 6,
+            pointHoverRadius: 8
+          }]
+        },
+        plugins: [{
+          id: 'weightLabelsAbovePoints',
+          afterDatasetsDraw(chart) {
+            const { ctx, data } = chart;
+            ctx.save();
+            ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
+            ctx.fillStyle = '#34d399';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            chart.getDatasetMeta(0).data.forEach((point, index) => {
+              const val = data.datasets[0].data[index];
+              if (val !== undefined && val !== null) {
+                ctx.fillText(`${val.toFixed(1)}кг`, point.x, point.y - 8);
+              }
+            });
+            ctx.restore();
+          }
+        }],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `Вага: ${ctx.parsed.y} кг`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(51, 65, 85, 0.25)' },
+              ticks: { color: '#94a3b8', font: { size: 11 } }
+            },
+            y: {
+              grid: { color: 'rgba(51, 65, 85, 0.35)' },
+              ticks: { color: '#94a3b8', font: { size: 11 } },
+              suggestedMin: 74,
+              suggestedMax: 78
             }
           }
         }
@@ -1165,16 +1011,11 @@
 
     function renderWeightTable() {
       const tbody = document.getElementById('weightTableBody');
-      
-      // Extract all valid weight records
       const weightMap = {};
       rawRecords.forEach(r => {
-        if (r.weight && r.weight > 30 && r.weight < 250) {
-          weightMap[r.date] = r.weight;
-        }
+        if (r.weight && r.weight > 30 && r.weight < 250) weightMap[r.date] = r.weight;
       });
 
-      // Sort dates chronologically ascending first to compute deltas
       const sortedAscDates = Object.keys(weightMap).sort();
       const rowsData = [];
 
@@ -1182,11 +1023,8 @@
         const d = sortedAscDates[i];
         const w = weightMap[d];
         let delta = 0;
-        if (i > 0) {
-          delta = w - weightMap[sortedAscDates[i - 1]];
-        }
+        if (i > 0) delta = w - weightMap[sortedAscDates[i - 1]];
         
-        // BMI Calculation: weight / (height_m ^ 2)
         const bmi = (w / (USER_HEIGHT_M * USER_HEIGHT_M)).toFixed(1);
         let bmiCategory = "Норма";
         let bmiClass = "bg-emerald-950 text-emerald-400 border-emerald-800/40";
@@ -1201,17 +1039,9 @@
           bmiClass = "bg-rose-950 text-rose-400 border-rose-800/40";
         }
 
-        rowsData.push({
-          date: d,
-          weight: w,
-          delta: delta,
-          bmi: bmi,
-          bmiCategory: bmiCategory,
-          bmiClass: bmiClass
-        });
+        rowsData.push({ date: d, weight: w, delta: delta, bmi: bmi, bmiCategory: bmiCategory, bmiClass: bmiClass });
       }
 
-      // Reverse order: NEWEST ON TOP (сортування навпаки)
       rowsData.reverse();
 
       let html = '';
@@ -1245,7 +1075,6 @@
       tbody.innerHTML = html;
     }
 
-    // Initialize on page load
     window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
