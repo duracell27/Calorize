@@ -363,7 +363,7 @@
             <span class="text-emerald-400">⚖️</span> Динаміка ваги (кг)
           </h3>
           <span id="badge-weight" class="text-[11px] font-extrabold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full">
-            76.7 кг
+            77.3 кг
           </span>
         </div>
         <div class="relative w-full h-48 sm:h-56">
@@ -404,7 +404,7 @@
 
     </div>
 
-    <!-- MEALS JOURNAL SECTION -->
+    <!-- MEALS JOURNAL SECTION (SINGLE FULL-WIDTH COLUMN ACROSS PC & MOBILE) -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
@@ -413,8 +413,8 @@
         <span id="journalDateLabel" class="text-xs text-slate-400 font-semibold">—</span>
       </div>
 
-      <!-- 6 MEAL BLOCKS -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4" id="mealsContainer">
+      <!-- 6 MEAL BLOCKS IN 1 COLUMN -->
+      <div class="grid grid-cols-1 gap-3.5 sm:gap-4" id="mealsContainer">
         <!-- JS dynamically renders the 6 meal sections here -->
       </div>
     </div>
@@ -440,7 +440,7 @@
               <th class="py-2.5 px-3 font-semibold">Дата</th>
               <th class="py-2.5 px-3 font-semibold">Вага</th>
               <th class="py-2.5 px-3 font-semibold">Зміна</th>
-              <th class="py-2.5 px-3 font-semibold">ІМТ (Індекс маси тіла)</th>
+              <th class="py-2.5 px-3 font-semibold">ІМТ</th>
             </tr>
           </thead>
           <tbody id="weightTableBody" class="divide-y divide-slate-800/60 font-medium">
@@ -457,8 +457,9 @@
     const SPREADSHEET_ID = '13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM';
     const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
-    // USER NORMS
+    // USER NORMS (NET CALORIES DEFINED!)
     const NORMS = {
+      net: 2450,
       cal: 2450,
       burn: 700,
       prot: 137,
@@ -701,15 +702,15 @@
       document.getElementById(`sub-${id}`).innerText = diff > 0 ? `${Math.round(diff)} ${unit}` : `+${Math.round(Math.abs(diff))} ${unit}`;
     }
 
-    // 4. RENDER 6 MEAL SECTIONS
+    // 4. RENDER 6 MEAL SECTIONS (FULL WIDTH ROW BY ROW)
     function renderMeals(dayRows) {
       const mealSections = [
-        { name: 'Сніданок', icon: '🌅', color: 'from-amber-500/20 to-orange-500/10 border-amber-500/30' },
-        { name: 'Перекус 1', icon: '☕', color: 'from-sky-500/20 to-blue-500/10 border-sky-500/30' },
-        { name: 'Обід', icon: '🍲', color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30' },
-        { name: 'Перекус 2', icon: '🍎', color: 'from-purple-500/20 to-indigo-500/10 border-purple-500/30' },
-        { name: 'Вечеря', icon: '🍽️', color: 'from-rose-500/20 to-red-500/10 border-rose-500/30' },
-        { name: 'Перекус 3', icon: '🌙', color: 'from-cyan-500/20 to-blue-500/10 border-cyan-500/30' }
+        { name: 'Сніданок', icon: '🌅' },
+        { name: 'Перекус 1', icon: '☕' },
+        { name: 'Обід', icon: '🍲' },
+        { name: 'Перекус 2', icon: '🍎' },
+        { name: 'Вечеря', icon: '🍽️' },
+        { name: 'Перекус 3', icon: '🌙' }
       ];
 
       const container = document.getElementById('mealsContainer');
@@ -728,7 +729,7 @@
         });
 
         const card = document.createElement('div');
-        card.className = `bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between`;
+        card.className = `bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 sm:p-5 shadow-sm`;
 
         let itemsHtml = '';
         if (items.length === 0) {
@@ -738,14 +739,15 @@
             let itemIcon = '🍽️';
             let nameLower = it.name.toLowerCase();
             let isAlcohol = nameLower.includes('пиво') || nameLower.includes('горілка') || nameLower.includes('наливк') || nameLower.includes('вино');
-            let isDrink = nameLower.includes('вода') || nameLower.includes('кава') || nameLower.includes('тонік') || nameLower.includes('кола') || nameLower.includes('пепсі') || nameLower.includes('лате');
 
             if (isAlcohol) itemIcon = '🍺';
             else if (nameLower.includes('кава') || nameLower.includes('лате')) itemIcon = '☕';
             else if (nameLower.includes('вода')) itemIcon = '💧';
             else if (nameLower.includes('кола') || nameLower.includes('тонік')) itemIcon = '🥤';
-            else if (nameLower.includes('салат') || nameLower.includes('овоч')) itemIcon = '🥗';
-            else if (nameLower.includes('млинц') || nameLower.includes('медовик') || nameLower.includes('торт') || nameLower.includes('вафл')) itemIcon = '🥞';
+            else if (nameLower.includes('салат') || nameLower.includes('овоч') || nameLower.includes('помідор') || nameLower.includes('моркв')) itemIcon = '🥗';
+            else if (nameLower.includes('млинц') || nameLower.includes('медовик') || nameLower.includes('торт') || nameLower.includes('вафл') || nameLower.includes('тарт')) itemIcon = '🥞';
+            else if (nameLower.includes('борщ') || nameLower.includes('бограч') || nameLower.includes('суп')) itemIcon = '🍲';
+            else if (nameLower.includes('бургер') || nameLower.includes('бутерброд') || nameLower.includes('сосиск')) itemIcon = '🥪';
 
             let hydBadge = '';
             if (it.effWater !== 0) {
@@ -757,19 +759,19 @@
             }
 
             return `
-              <div class="py-2 flex items-start justify-between gap-2 border-b border-slate-800/50 last:border-0">
-                <div class="flex items-start gap-2">
-                  <span class="text-base mt-0.5">${itemIcon}</span>
+              <div class="py-2.5 flex items-start justify-between gap-3 border-b border-slate-800/60 last:border-0">
+                <div class="flex items-start gap-2.5">
+                  <span class="text-base sm:text-lg mt-0.5">${itemIcon}</span>
                   <div>
-                    <div class="text-xs sm:text-sm font-semibold text-slate-100">${it.name}</div>
+                    <div class="text-xs sm:text-sm font-bold text-slate-100">${it.name}</div>
                     <div class="text-[11px] text-slate-400 flex flex-wrap items-center gap-1.5 mt-0.5">
-                      ${it.weight ? `<span class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-300 font-medium">${it.weight}</span>` : ''}
+                      ${it.weight ? `<span class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-300 font-semibold">${it.weight}</span>` : ''}
                       <span>Б: ${it.prot}г • Ж: ${it.fat}г • В: ${it.carb}г</span>
                       ${hydBadge}
                     </div>
                   </div>
                 </div>
-                <div class="text-right">
+                <div class="text-right whitespace-nowrap">
                   <span class="text-xs sm:text-sm font-black ${it.cal > 0 ? 'text-amber-400' : 'text-slate-500'}">
                     ${it.cal > 0 ? `${Math.round(it.cal)} ккал` : '0 ккал'}
                   </span>
@@ -781,12 +783,12 @@
 
         card.innerHTML = `
           <div>
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-              <div class="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-200">
-                <span class="text-base">${sec.icon}</span>
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-2">
+              <div class="flex items-center gap-2 font-bold text-xs sm:text-sm text-slate-200">
+                <span class="text-lg">${sec.icon}</span>
                 <span>${sec.name}</span>
               </div>
-              <span class="text-xs font-black ${secCal > 0 ? 'text-amber-400 bg-amber-950/60 border border-amber-800/60' : 'text-slate-500 bg-slate-800/50 border border-slate-700/50'} px-2 py-0.5 rounded-lg">
+              <span class="text-xs font-black ${secCal > 0 ? 'text-amber-400 bg-amber-950/60 border border-amber-800/60' : 'text-slate-500 bg-slate-800/50 border border-slate-700/50'} px-2.5 py-1 rounded-lg">
                 ${Math.round(secCal)} ккал
               </span>
             </div>
@@ -795,9 +797,9 @@
             </div>
           </div>
           ${items.length > 0 ? `
-            <div class="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+            <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
               <span>БЖВ прийому:</span>
-              <span class="font-semibold text-slate-300">Б: ${Math.round(secProt)}г • Ж: ${Math.round(secFat)}г • В: ${Math.round(secCarb)}г</span>
+              <span class="font-bold text-slate-300">Б: ${Math.round(secProt)}г • Ж: ${Math.round(secFat)}г • В: ${Math.round(secCarb)}г</span>
             </div>
           ` : ''}
         `;
@@ -806,7 +808,7 @@
       });
     }
 
-    // 5. MONTHLY INTERACTIVE METRIC CHART
+    // 5. MONTHLY INTERACTIVE METRIC CHART (WITH ACCURATE NORM TARGETS)
     function selectMetric(metricKey) {
       activeMetric = metricKey;
 
@@ -869,25 +871,34 @@
         return Math.round(item[metricKey] || 0);
       });
 
-      const targetNorm = NORMS[metricKey] || 0;
+      const targetNorm = NORMS[metricKey] || 2450;
       const avgVal = Math.round(values.reduce((a, b) => a + b, 0) / (values.length || 1));
       document.getElementById('chartAvgLabel').innerText = `${avgVal} ${normUnits[metricKey].split(' ')[1] || ''}`;
 
-      // Colors
+      // Accurate color coding
       let barColor = '#38bdf8';
-      if (metricKey === 'net') barColor = values.map(v => v > targetNorm ? '#f43f5e' : (v >= targetNorm * 0.7 ? '#10b981' : '#f59e0b'));
-      else if (metricKey === 'cal') barColor = '#fbbf24';
-      else if (metricKey === 'burn') barColor = '#a855f7';
-      else if (metricKey === 'prot') barColor = '#38bdf8';
-      else if (metricKey === 'fat') barColor = '#fb7185';
-      else if (metricKey === 'carb') barColor = '#facc15';
-      else if (metricKey === 'fiber') barColor = '#34d399';
-      else if (metricKey === 'water') barColor = '#06b6d4';
+      if (metricKey === 'net') {
+        barColor = values.map(v => v > targetNorm ? '#f43f5e' : (v >= targetNorm * 0.7 ? '#10b981' : '#f59e0b'));
+      } else if (metricKey === 'cal') {
+        barColor = values.map(v => v > targetNorm ? '#f43f5e' : (v >= targetNorm * 0.7 ? '#10b981' : '#f59e0b'));
+      } else if (metricKey === 'burn') {
+        barColor = values.map(v => v >= targetNorm ? '#a855f7' : '#c084fc');
+      } else if (metricKey === 'prot') {
+        barColor = values.map(v => v >= targetNorm ? '#38bdf8' : '#7dd3fc');
+      } else if (metricKey === 'fat') {
+        barColor = values.map(v => v > targetNorm ? '#fb7185' : '#10b981');
+      } else if (metricKey === 'carb') {
+        barColor = values.map(v => v > targetNorm ? '#facc15' : '#fbbf24');
+      } else if (metricKey === 'fiber') {
+        barColor = values.map(v => v >= targetNorm ? '#10b981' : '#34d399');
+      } else if (metricKey === 'water') {
+        barColor = values.map(v => v >= targetNorm ? '#06b6d4' : '#38bdf8');
+      }
 
       const ctx = document.getElementById('monthlyChart').getContext('2d');
       if (monthlyChartInst) monthlyChartInst.destroy();
 
-      // Custom line plugin for target norm line in the center
+      // Target norm line in the center
       const normLinePlugin = {
         id: 'normLinePlugin',
         afterDraw: (chart) => {
@@ -914,9 +925,8 @@
         }
       };
 
-      // Set scale bounds so targetNorm is roughly centered
       const maxData = Math.max(...values, targetNorm);
-      const suggestedMax = Math.max(targetNorm * 1.8, maxData * 1.15);
+      const suggestedMax = Math.max(targetNorm * 1.6, maxData * 1.15);
 
       monthlyChartInst = new Chart(ctx, {
         type: 'bar',
@@ -1145,7 +1155,7 @@
       });
     }
 
-    // 7. WEIGH-IN HISTORY TABLE (REVERSE SORTED + BMI)
+    // 7. WEIGH-IN HISTORY TABLE (REVERSE SORTED + NUMBER-ONLY BMI)
     function renderWeightTable() {
       const tbody = document.getElementById('weightTableBody');
       tbody.innerHTML = '';
@@ -1184,16 +1194,8 @@
           }
         }
 
-        // BMI Calculation: Weight / (Height in m)^2
+        // BMI Calculation: ONLY the number displayed!
         const bmi = (curW / (NORMS.height * NORMS.height)).toFixed(1);
-        let bmiBadge = '';
-        if (bmi < 18.5) {
-          bmiBadge = `<span class="text-amber-400 bg-amber-950/60 border border-amber-800/50 px-2 py-0.5 rounded text-[11px]">${bmi} (Дефіцит)</span>`;
-        } else if (bmi <= 24.9) {
-          bmiBadge = `<span class="text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2 py-0.5 rounded text-[11px]">${bmi} (Норма)</span>`;
-        } else {
-          bmiBadge = `<span class="text-rose-400 bg-rose-950/60 border border-rose-800/50 px-2 py-0.5 rounded text-[11px]">${bmi} (Надлишок)</span>`;
-        }
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-800/40 transition';
@@ -1201,7 +1203,7 @@
           <td class="py-2.5 px-3 font-semibold text-slate-200">${formatDateUkrainian(d)}</td>
           <td class="py-2.5 px-3 font-black text-white">${curW} кг</td>
           <td class="py-2.5 px-3">${diffHtml}</td>
-          <td class="py-2.5 px-3">${bmiBadge}</td>
+          <td class="py-2.5 px-3 font-extrabold text-slate-200">${bmi}</td>
         `;
         tbody.appendChild(tr);
       });
