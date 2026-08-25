@@ -2,7 +2,7 @@
 <html lang="uk" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Calorize — Персональний трекер калорій</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,6 +14,7 @@
           colors: {
             brand: {
               50: '#ecfdf5',
+              400: '#34d399',
               500: '#10b981',
               600: '#059669',
               700: '#047857'
@@ -24,125 +25,179 @@
     }
   </script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    .card-glow { transition: all 0.2s ease; cursor: pointer; }
-    .card-glow:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
-    .card-active { ring: 2px solid #3b82f6; background-color: rgba(30, 41, 59, 0.9) !important; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card-touch { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; cursor: pointer; }
+    .card-touch:active { transform: scale(0.98); }
+    .card-active { ring: 2px solid #38bdf8; background: linear-gradient(145deg, #1e293b, #0f172a) !important; border-color: #38bdf8 !important; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 antialiased">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-20 sm:pb-12 antialiased selection:bg-emerald-500 selection:text-white">
 
-  <!-- TOP HEADER -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-xl shadow-lg shadow-emerald-900/30">
-          🥗
+  <!-- TOP APP HEADER -->
+  <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-4">
+      
+      <!-- LOGO & SYNC -->
+      <div class="w-full sm:w-auto flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-lg sm:text-xl shadow-md shadow-emerald-950">
+            🥗
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-lg sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+                Calorize
+              </h1>
+              <span id="syncBadge" class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Live Sync</span>
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400">Трекер харчування та активності</p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-            Calorize
-          </h1>
-          <p class="text-xs text-slate-400">Персональний фітнес-щоденник</p>
+
+        <!-- REFRESH & SPREADSHEET BUTTONS (MOBILE RIGHT) -->
+        <div class="flex sm:hidden items-center gap-1.5">
+          <button onclick="fetchSheetData()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 border border-slate-700 text-xs flex items-center gap-1" title="Оновити дані">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+          <a href="https://docs.google.com/spreadsheets/d/13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM/edit" target="_blank" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700" title="Відкрити таблицю">
+            <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H6v-2h3v2zm0-4H6v-2h3v2zm0-4H6V7h3v2zm4 8h-3v-2h3v2zm0-4h-3v-2h3v2zm0-4h-3V7h3v2zm5 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z"/></svg>
+          </a>
         </div>
       </div>
 
       <!-- DATE SELECTOR -->
-      <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700">
-        <button onclick="changeDate(-1)" class="p-2 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Попередній день">
+      <div class="w-full sm:w-auto flex items-center justify-between sm:justify-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800 shadow-inner">
+        <button onclick="changeDate(-1)" class="p-2 rounded-lg hover:bg-slate-800 active:bg-slate-700 text-slate-300 hover:text-white transition" title="Попередній день">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
-        <input type="date" id="datePicker" onchange="onDateSelect(this.value)" class="bg-slate-900 text-slate-200 border border-slate-700 text-sm font-medium rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-        <button onclick="changeDate(1)" class="p-2 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Наступний день">
+        <input type="date" id="datePicker" onchange="onDateSelect(this.value)" class="bg-slate-950 text-slate-100 border border-slate-700/80 text-xs sm:text-sm font-semibold rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-center">
+        <button onclick="changeDate(1)" class="p-2 rounded-lg hover:bg-slate-800 active:bg-slate-700 text-slate-300 hover:text-white transition" title="Наступний день">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
-        <button onclick="goToToday()" class="text-xs bg-emerald-600/30 text-emerald-400 hover:bg-emerald-600/50 px-2.5 py-1.5 rounded-lg border border-emerald-500/30 font-medium transition">
+        <button onclick="goToToday()" class="text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 px-3 py-1.5 rounded-lg border border-emerald-500/30 font-bold transition">
           Сьогодні
         </button>
       </div>
 
-      <!-- LIVE SYNC STATUS & TABLE LINK -->
-      <div class="flex items-center gap-3">
-        <div id="syncStatus" class="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-3 py-1.5 rounded-full">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Google Таблиця</span>
-        </div>
-        <button onclick="fetchSheetData()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition" title="Оновити з таблиці">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      <!-- DESKTOP RIGHT ACTIONS -->
+      <div class="hidden sm:flex items-center gap-3">
+        <button onclick="fetchSheetData()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition" title="Оновити дані">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span>Оновити</span>
         </button>
-        <a href="https://docs.google.com/spreadsheets/d/13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM/edit" target="_blank" class="hidden sm:flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-2 rounded-xl border border-slate-700 transition">
+        <a href="https://docs.google.com/spreadsheets/d/13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM/edit" target="_blank" class="flex items-center gap-1.5 text-xs bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 px-3.5 py-2 rounded-xl border border-emerald-800/60 font-semibold transition">
           <span>Таблиця</span>
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
         </a>
       </div>
+
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-7 space-y-6 sm:space-y-8">
 
     <!-- SUMMARY SECTION -->
     <div class="space-y-4">
       
       <!-- ROW 1: ENERGY BALANCE (3 CARDS) -->
       <div>
-        <div class="flex items-center justify-between mb-2.5">
-          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <span>⚡</span> Енергетичний баланс
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+            <span class="text-amber-400">⚡</span> Енергетичний баланс
           </h2>
-          <span class="text-xs text-slate-500">Натисніть на картку для місячного графіка</span>
+          <span class="text-[11px] text-slate-400 hidden sm:inline">Клікніть на картку для відкриття місячного графіка</span>
+          <span class="text-[10px] text-slate-400 sm:hidden">Клікніть для графіка</span>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
           
           <!-- 1. NET BALANCE -->
-          <div id="card-balance" onclick="selectMetric('balance')" class="card-glow bg-slate-900 border border-slate-800 p-4 rounded-2xl relative overflow-hidden">
+          <div onclick="selectMetric('net')" id="card-net" class="card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 shadow-sm hover:border-slate-700">
             <div class="flex items-center justify-between mb-1.5">
-              <span class="text-xs font-medium text-slate-400">Баланс калорій (Net)</span>
-              <span id="badge-balance" class="text-xs px-2 py-0.5 rounded-full font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/40">Норма</span>
+              <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <span class="text-base">⚖️</span> Баланс калорій
+              </span>
+              <span id="badge-net" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                —
+              </span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span id="val-balance" class="text-3xl font-extrabold text-emerald-400">0</span>
-              <span class="text-xs text-slate-400">/ 2450 ккал</span>
+            <div class="flex items-baseline justify-between">
+              <div>
+                <span id="val-net" class="text-2xl sm:text-3xl font-black tracking-tight text-white">0</span>
+                <span class="text-xs text-slate-400 font-medium">/ 2450 ккал</span>
+              </div>
+              <span id="pct-net" class="text-xs font-bold text-slate-300">0%</span>
             </div>
-            <div class="w-full bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
-              <div id="prog-balance" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <!-- PROGRESS BAR -->
+            <div class="w-full bg-slate-950/80 rounded-full h-2 mt-2.5 overflow-hidden border border-slate-800">
+              <div id="bar-net" class="h-2 rounded-full transition-all duration-500 bg-emerald-500" style="width: 0%"></div>
             </div>
-            <p id="sub-balance" class="text-xs text-slate-400 mt-2">Спожито − Витрачено</p>
+            <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+              <span>Спожито − Витрачено</span>
+              <span id="sub-net" class="font-semibold text-slate-300">0 ккал</span>
+            </div>
           </div>
 
-          <!-- 2. CONSUMED -->
-          <div id="card-consumed" onclick="selectMetric('consumed')" class="card-glow bg-slate-900 border border-slate-800 p-4 rounded-2xl relative overflow-hidden">
+          <!-- 2. CONSUMED CALORIES -->
+          <div onclick="selectMetric('cal')" id="card-cal" class="card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 shadow-sm hover:border-slate-700">
             <div class="flex items-center justify-between mb-1.5">
-              <span class="text-xs font-medium text-slate-400">Спожито</span>
-              <span id="badge-consumed" class="text-xs px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-300">0%</span>
+              <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <span class="text-base">🍔</span> Спожито калорій
+              </span>
+              <span id="badge-cal" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                —
+              </span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span id="val-consumed" class="text-3xl font-extrabold text-slate-100">0</span>
-              <span class="text-xs text-slate-400">/ 2450 ккал</span>
+            <div class="flex items-baseline justify-between">
+              <div>
+                <span id="val-cal" class="text-2xl sm:text-3xl font-black tracking-tight text-amber-400">0</span>
+                <span class="text-xs text-slate-400 font-medium">/ 2450 ккал</span>
+              </div>
+              <span id="pct-cal" class="text-xs font-bold text-amber-400">0%</span>
             </div>
-            <div class="w-full bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
-              <div id="prog-consumed" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-slate-950/80 rounded-full h-2 mt-2.5 overflow-hidden border border-slate-800">
+              <div id="bar-cal" class="h-2 rounded-full transition-all duration-500 bg-gradient-to-r from-amber-500 to-orange-400" style="width: 0%"></div>
             </div>
-            <p id="sub-consumed" class="text-xs text-slate-400 mt-2">Залишилось: 2450 ккал</p>
+            <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+              <span>Залишок до норми:</span>
+              <span id="sub-cal" class="font-semibold text-slate-300">2450 ккал</span>
+            </div>
           </div>
 
           <!-- 3. BURNED (GARMIN) -->
-          <div id="card-burned" onclick="selectMetric('burned')" class="card-glow bg-slate-900 border border-slate-800 p-4 rounded-2xl relative overflow-hidden">
+          <div onclick="selectMetric('burn')" id="card-burn" class="card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 shadow-sm hover:border-slate-700">
             <div class="flex items-center justify-between mb-1.5">
-              <span class="text-xs font-medium text-slate-400">Витрачено (Garmin)</span>
-              <span id="badge-burned" class="text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-950 text-amber-400 border border-amber-800/40">0%</span>
+              <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <span class="text-base">🔥</span> Витрачено (Garmin)
+              </span>
+              <span id="badge-burn" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                —
+              </span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span id="val-burned" class="text-3xl font-extrabold text-amber-400">0</span>
-              <span class="text-xs text-slate-400">/ 700 ккал</span>
+            <div class="flex items-baseline justify-between">
+              <div>
+                <span id="val-burn" class="text-2xl sm:text-3xl font-black tracking-tight text-violet-400">0</span>
+                <span class="text-xs text-slate-400 font-medium">/ 700 ккал</span>
+              </div>
+              <span id="pct-burn" class="text-xs font-bold text-violet-400">0%</span>
             </div>
-            <div class="w-full bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
-              <div id="prog-burned" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-slate-950/80 rounded-full h-2 mt-2.5 overflow-hidden border border-slate-800">
+              <div id="bar-burn" class="h-2 rounded-full transition-all duration-500 bg-gradient-to-r from-purple-500 to-indigo-400" style="width: 0%"></div>
             </div>
-            <p id="sub-burned" class="text-xs text-slate-400 mt-2">Ціль: 700 ккал/день</p>
+            <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+              <span>Ціль активності:</span>
+              <span id="sub-burn" class="font-semibold text-slate-300">700 ккал</span>
+            </div>
           </div>
 
         </div>
@@ -150,78 +205,118 @@
 
       <!-- ROW 2: NUTRIENTS & HYDRATION (5 CARDS) -->
       <div>
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-2">
-          <span>🥗</span> Нутрієнти та гідратація
-        </h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+            <span class="text-cyan-400">🥗</span> Нутрієнти та гідратація
+          </h2>
+          <span class="text-[10px] text-slate-400">5 ключових показників</span>
+        </div>
+        
+        <!-- RESPONSIVE 2-COL ON MOBILE, 5-COL ON DESKTOP -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
           
           <!-- PROTEIN -->
-          <div id="card-protein" onclick="selectMetric('protein')" class="card-glow bg-slate-900 border border-slate-800 p-3.5 rounded-2xl">
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-              <span>🥩 Білки</span>
-              <span id="pct-protein" class="text-indigo-400 font-semibold">0%</span>
+          <div onclick="selectMetric('prot')" id="card-prot" class="card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 shadow-sm hover:border-slate-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] sm:text-xs font-bold text-sky-300 flex items-center gap-1">
+                <span>🥩</span> Білки
+              </span>
+              <span id="pct-prot" class="text-[10px] font-bold text-sky-400">0%</span>
             </div>
-            <div class="text-xl font-bold text-slate-100">
-              <span id="val-protein">0</span> <span class="text-xs text-slate-400 font-normal">/ 137г</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-prot" class="text-xl sm:text-2xl font-black text-white">0</span>
+              <span class="text-[11px] text-slate-400 font-medium">/ 137 г</span>
             </div>
-            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
-              <div id="prog-protein" class="bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-slate-950/80 rounded-full h-1.5 mt-2 overflow-hidden border border-slate-800">
+              <div id="bar-prot" class="h-1.5 rounded-full transition-all duration-500 bg-sky-400" style="width: 0%"></div>
+            </div>
+            <div class="mt-1.5 text-[10px] text-slate-400 flex justify-between">
+              <span>Залишилось:</span>
+              <span id="sub-prot" class="font-semibold text-slate-300">137 г</span>
             </div>
           </div>
 
           <!-- FAT -->
-          <div id="card-fat" onclick="selectMetric('fat')" class="card-glow bg-slate-900 border border-slate-800 p-3.5 rounded-2xl">
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-              <span>🥑 Жири</span>
-              <span id="pct-fat" class="text-rose-400 font-semibold">0%</span>
+          <div onclick="selectMetric('fat')" id="card-fat" class="card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 shadow-sm hover:border-slate-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] sm:text-xs font-bold text-rose-300 flex items-center gap-1">
+                <span>🥑</span> Жири
+              </span>
+              <span id="pct-fat" class="text-[10px] font-bold text-rose-400">0%</span>
             </div>
-            <div class="text-xl font-bold text-slate-100">
-              <span id="val-fat">0</span> <span class="text-xs text-slate-400 font-normal">/ 76г</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-fat" class="text-xl sm:text-2xl font-black text-white">0</span>
+              <span class="text-[11px] text-slate-400 font-medium">/ 76 г</span>
             </div>
-            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
-              <div id="prog-fat" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-slate-950/80 rounded-full h-1.5 mt-2 overflow-hidden border border-slate-800">
+              <div id="bar-fat" class="h-1.5 rounded-full transition-all duration-500 bg-rose-400" style="width: 0%"></div>
+            </div>
+            <div class="mt-1.5 text-[10px] text-slate-400 flex justify-between">
+              <span>Залишилось:</span>
+              <span id="sub-fat" class="font-semibold text-slate-300">76 г</span>
             </div>
           </div>
 
           <!-- CARBS -->
-          <div id="card-carbs" onclick="selectMetric('carbs')" class="card-glow bg-slate-900 border border-slate-800 p-3.5 rounded-2xl">
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-              <span>🍞 Вуглеводи</span>
-              <span id="pct-carbs" class="text-amber-400 font-semibold">0%</span>
+          <div onclick="selectMetric('carb')" id="card-carb" class="card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 shadow-sm hover:border-slate-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] sm:text-xs font-bold text-amber-300 flex items-center gap-1">
+                <span>🍞</span> Вуглеводи
+              </span>
+              <span id="pct-carb" class="text-[10px] font-bold text-amber-400">0%</span>
             </div>
-            <div class="text-xl font-bold text-slate-100">
-              <span id="val-carbs">0</span> <span class="text-xs text-slate-400 font-normal">/ 305г</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-carb" class="text-xl sm:text-2xl font-black text-white">0</span>
+              <span class="text-[11px] text-slate-400 font-medium">/ 305 г</span>
             </div>
-            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
-              <div id="prog-carbs" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-slate-950/80 rounded-full h-1.5 mt-2 overflow-hidden border border-slate-800">
+              <div id="bar-carb" class="h-1.5 rounded-full transition-all duration-500 bg-amber-400" style="width: 0%"></div>
+            </div>
+            <div class="mt-1.5 text-[10px] text-slate-400 flex justify-between">
+              <span>Залишилось:</span>
+              <span id="sub-carb" class="font-semibold text-slate-300">305 г</span>
             </div>
           </div>
 
           <!-- FIBER -->
-          <div id="card-fiber" onclick="selectMetric('fiber')" class="card-glow bg-slate-900 border border-slate-800 p-3.5 rounded-2xl">
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-              <span>🌾 Клітковина</span>
-              <span id="pct-fiber" class="text-teal-400 font-semibold">0%</span>
+          <div onclick="selectMetric('fiber')" id="card-fiber" class="card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 shadow-sm hover:border-slate-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] sm:text-xs font-bold text-emerald-300 flex items-center gap-1">
+                <span>🌾</span> Клітковина
+              </span>
+              <span id="pct-fiber" class="text-[10px] font-bold text-emerald-400">0%</span>
             </div>
-            <div class="text-xl font-bold text-slate-100">
-              <span id="val-fiber">0</span> <span class="text-xs text-slate-400 font-normal">/ 30г</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-fiber" class="text-xl sm:text-2xl font-black text-white">0</span>
+              <span class="text-[11px] text-slate-400 font-medium">/ 30 г</span>
             </div>
-            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
-              <div id="prog-fiber" class="bg-teal-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-slate-950/80 rounded-full h-1.5 mt-2 overflow-hidden border border-slate-800">
+              <div id="bar-fiber" class="h-1.5 rounded-full transition-all duration-500 bg-emerald-400" style="width: 0%"></div>
+            </div>
+            <div class="mt-1.5 text-[10px] text-slate-400 flex justify-between">
+              <span>Залишилось:</span>
+              <span id="sub-fiber" class="font-semibold text-slate-300">30 г</span>
             </div>
           </div>
 
-          <!-- HYDRATION -->
-          <div id="card-water" onclick="selectMetric('water')" class="card-glow bg-slate-900 border border-slate-800 p-3.5 rounded-2xl col-span-2 sm:col-span-1">
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-              <span>💧 Гідратація</span>
-              <span id="pct-water" class="text-cyan-400 font-semibold">0%</span>
+          <!-- HYDRATION (COL-SPAN-2 ON MOBILE) -->
+          <div onclick="selectMetric('water')" id="card-water" class="col-span-2 lg:col-span-1 card-touch bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 shadow-sm hover:border-slate-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] sm:text-xs font-bold text-cyan-300 flex items-center gap-1">
+                <span>💧</span> Гідратація
+              </span>
+              <span id="pct-water" class="text-[10px] font-bold text-cyan-400">0%</span>
             </div>
-            <div class="text-xl font-bold text-slate-100">
-              <span id="val-water">0</span> <span class="text-xs text-slate-400 font-normal">/ 2650мл</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-water" class="text-xl sm:text-2xl font-black text-white">0</span>
+              <span class="text-[11px] text-slate-400 font-medium">/ 2650 мл</span>
             </div>
-            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
-              <div id="prog-water" class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-slate-950/80 rounded-full h-1.5 mt-2 overflow-hidden border border-slate-800">
+              <div id="bar-water" class="h-1.5 rounded-full transition-all duration-500 bg-gradient-to-r from-cyan-400 to-blue-500" style="width: 0%"></div>
+            </div>
+            <div class="mt-1.5 text-[10px] text-slate-400 flex justify-between">
+              <span>Залишилось:</span>
+              <span id="sub-water" class="font-semibold text-slate-300">2650 мл</span>
             </div>
           </div>
 
@@ -230,369 +325,493 @@
 
     </div>
 
-    <!-- DYNAMIC MONTHLY METRIC EXPANDED PANEL (ON CARD CLICK) -->
-    <div id="metricDetailPanel" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl transition-all">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 border-b border-slate-800/80 pb-3">
-        <div class="flex items-center gap-3">
-          <div id="metricIcon" class="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center text-lg">
-            ⚡
-          </div>
+    <!-- MONTHLY CHART DRAWER (OPENS ON CARD CLICK) -->
+    <div id="monthlyChartSection" class="bg-slate-900/95 border border-cyan-800/60 rounded-2xl p-3.5 sm:p-5 shadow-xl transition-all duration-300">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3.5 border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="p-1.5 rounded-lg bg-cyan-950/80 border border-cyan-800/50 text-cyan-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+          </span>
           <div>
-            <h3 id="metricTitle" class="text-base font-bold text-slate-100">Місячний аналіз: Баланс калорій</h3>
-            <p id="metricSubtitle" class="text-xs text-slate-400">Поточний місяць (Серпень 2026) • Червона пунктирна лінія посередині — добова норма</p>
+            <h3 id="monthlyChartTitle" class="text-xs sm:text-sm font-bold text-white">Місячний аналіз: Баланс калорій</h3>
+            <p class="text-[11px] text-slate-400">Пунктирна лінія посередині — цільова добова норма</p>
           </div>
         </div>
-        <div id="metricStatsPills" class="flex flex-wrap items-center gap-2 text-xs"></div>
-      </div>
-      
-      <div class="h-64 sm:h-72 w-full">
-        <canvas id="metricMonthlyChart"></canvas>
-      </div>
-    </div>
-
-    <!-- 3 MAIN HISTORICAL & ANALYTICAL CHARTS (ВАГА + ГІДРАТАЦІЯ + БЖВ) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <!-- 1. WEIGHT DYNAMICS CHART (НОВИЙ ДИНАМІЧНИЙ ГРАФІК ВАГИ) -->
-      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <span>⚖️</span> Динаміка ваги тіла (кг)
-          </h3>
-          <span id="currentWeightBadge" class="text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 px-2.5 py-0.5 rounded-full font-semibold">
-            Поточна: 76.9 кг
+        <!-- PILLS STATS -->
+        <div class="flex items-center gap-2 text-[10px] sm:text-xs">
+          <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
+            Норма: <b id="chartNormLabel" class="text-white">2450 ккал</b>
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
+            Середнє: <b id="chartAvgLabel" class="text-emerald-400">0</b>
           </span>
         </div>
-        <div class="h-60">
-          <canvas id="weightLineChart"></canvas>
+      </div>
+      <!-- CHART CANVAS WRAPPER -->
+      <div class="relative w-full h-56 sm:h-72">
+        <canvas id="monthlyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- MAIN ANALYTICS ROW (WEIGHT, HYDRATION, MACROS) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-6">
+      
+      <!-- 1. WEIGHT DYNAMICS -->
+      <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
+          <h3 class="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-1.5">
+            <span class="text-emerald-400">⚖️</span> Динаміка ваги (кг)
+          </h3>
+          <span id="badge-weight" class="text-[11px] font-extrabold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full">
+            76.7 кг
+          </span>
         </div>
-        <p class="text-xs text-slate-400 text-center mt-4 pt-3 border-t border-slate-800">
-          Показано всі реальні зважування з фіксацією дати та динаміки.
-        </p>
+        <div class="relative w-full h-48 sm:h-56">
+          <canvas id="weightChart"></canvas>
+        </div>
       </div>
 
-      <!-- 2. HYDRATION CHART (WITH LITERS LABELS OVER BARS) -->
-      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <span>💧</span> Гідратація по днях (мл)
+      <!-- 2. HYDRATION DAILY -->
+      <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
+          <h3 class="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-1.5">
+            <span class="text-cyan-400">💧</span> Гідратація по днях
           </h3>
-          <span class="text-xs text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded-full font-medium">Норма: 2.65 л</span>
+          <span class="text-[11px] font-semibold text-slate-400">Ціль: 2.65л</span>
         </div>
-        <div class="h-60">
-          <canvas id="hydrationBarChart"></canvas>
+        <div class="relative w-full h-48 sm:h-56">
+          <canvas id="hydrationChart"></canvas>
         </div>
-        <p class="text-xs text-slate-400 text-center mt-4 pt-3 border-t border-slate-800">
-          Над кожним стовпчиком вказано сумарний об'єм у літрах з урахуванням коефіцієнтів.
-        </p>
       </div>
 
-      <!-- 3. MACRONUTRIENTS DONUT (БЖВ ЗА ОБРАНИЙ ДЕНЬ) -->
-      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <span>🥧</span> Розподіл БЖВ
+      <!-- 3. MACRO SPLIT -->
+      <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2 border-b border-slate-800 pb-2.5">
+          <h3 class="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-1.5">
+            <span class="text-amber-400">🥧</span> Розподіл БЖВ за день
           </h3>
-          <span id="donutDateLabel" class="text-xs text-slate-400"></span>
+          <span id="badge-macro-total" class="text-[11px] font-semibold text-slate-400">0 г</span>
         </div>
-        <div class="h-56 flex items-center justify-center">
-          <canvas id="macroDonutChart"></canvas>
+        <div class="relative w-full h-44 sm:h-48 my-auto">
+          <canvas id="macroChart"></canvas>
         </div>
-        <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-800 text-center text-xs">
-          <div>
-            <span class="text-slate-400 block">Білки</span>
-            <span id="donutP" class="font-bold text-indigo-400">0г</span>
-          </div>
-          <div>
-            <span class="text-slate-400 block">Жири</span>
-            <span id="donutF" class="font-bold text-rose-400">0г</span>
-          </div>
-          <div>
-            <span class="text-slate-400 block">Вуглеводи</span>
-            <span id="donutC" class="font-bold text-amber-400">0г</span>
-          </div>
+        <div class="grid grid-cols-3 gap-1 pt-2.5 border-t border-slate-800/80 text-center text-[11px]">
+          <div><span class="text-sky-400 font-bold block" id="legend-prot">0г</span><span class="text-slate-400 text-[10px]">Білки</span></div>
+          <div><span class="text-rose-400 font-bold block" id="legend-fat">0г</span><span class="text-slate-400 text-[10px]">Жири</span></div>
+          <div><span class="text-amber-400 font-bold block" id="legend-carb">0г</span><span class="text-slate-400 text-[10px]">Вуглеводи</span></div>
         </div>
       </div>
 
     </div>
 
-    <!-- MEAL LOG SECTIONS -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-6">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
-          <span>🍽️</span> Журнал харчування за <span id="mealLogDateLabel" class="text-emerald-400">сьогодні</span>
-        </h3>
-        <span id="totalItemsCount" class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-medium">0 записів</span>
+    <!-- MEALS JOURNAL SECTION -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+          <span class="text-emerald-400">🍽️</span> Журнал прийомів їжі
+        </h2>
+        <span id="journalDateLabel" class="text-xs text-slate-400 font-semibold">—</span>
       </div>
 
-      <div id="mealSectionsContainer" class="space-y-4"></div>
+      <!-- 6 MEAL BLOCKS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4" id="mealsContainer">
+        <!-- JS dynamically renders the 6 meal sections here -->
+      </div>
     </div>
 
-    <!-- WEIGH-IN HISTORY TABLE (DESCENDING WITH BMI) -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <!-- WEIGH-IN HISTORY TABLE -->
+    <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 sm:p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
           <span class="text-lg">⚖️</span>
           <div>
-            <h3 class="text-base font-bold text-slate-100">Історія зважувань (останні виміри)</h3>
-            <p class="text-xs text-slate-400">Зріст: 183 см • Сортування: новіші зверху</p>
+            <h3 class="text-xs sm:text-sm font-bold text-white">Історія зважувань</h3>
+            <p class="text-[11px] text-slate-400">Останні виміри зверху, ІМТ розраховано для зросту 183 см</p>
           </div>
         </div>
-        <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800/40 px-2.5 py-1 rounded-full font-semibold">
-          Нормальний ІМТ: 18.5 – 24.9
-        </span>
+        <span class="text-xs text-slate-400 font-semibold">Ціль: 76.0 кг</span>
       </div>
 
+      <!-- RESPONSIVE TABLE -->
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-slate-300">
-          <thead class="text-xs uppercase bg-slate-800/70 text-slate-400">
-            <tr>
-              <th scope="col" class="px-4 py-3 rounded-l-xl">Дата</th>
-              <th scope="col" class="px-4 py-3">Вага тіла</th>
-              <th scope="col" class="px-4 py-3">Зміна від попереднього</th>
-              <th scope="col" class="px-4 py-3 rounded-r-xl">Індекс маси тіла (ІМТ)</th>
+        <table class="w-full text-left text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-slate-800 text-[11px] text-slate-400 uppercase tracking-wider">
+              <th class="py-2.5 px-3 font-semibold">Дата</th>
+              <th class="py-2.5 px-3 font-semibold">Вага</th>
+              <th class="py-2.5 px-3 font-semibold">Зміна</th>
+              <th class="py-2.5 px-3 font-semibold">ІМТ (Індекс маси тіла)</th>
             </tr>
           </thead>
-          <tbody id="weightTableBody" class="divide-y divide-slate-800/60 font-medium"></tbody>
+          <tbody id="weightTableBody" class="divide-y divide-slate-800/60 font-medium">
+            <!-- Populated via JS -->
+          </tbody>
         </table>
       </div>
     </div>
 
   </main>
 
+  <!-- JAVASCRIPT LOGIC & LIVE SYNC -->
   <script>
-    const USER_HEIGHT_M = 1.83;
+    const SPREADSHEET_ID = '13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM';
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+
+    // USER NORMS
     const NORMS = {
-      calories: 2450,
-      burned: 700,
-      protein: 137,
+      cal: 2450,
+      burn: 700,
+      prot: 137,
       fat: 76,
-      carbs: 305,
+      carb: 305,
       fiber: 30,
-      water: 2650
+      water: 2650,
+      height: 1.83
     };
 
-    let rawRecords = [];
-    let currentDate = "2026-08-21";
-    let selectedMetricKey = "balance";
-    let metricMonthlyChartInstance = null;
-    let weightLineChartInstance = null;
-    let macroDonutChartInstance = null;
-    let hydrationBarChartInstance = null;
-    const SPREADSHEET_ID = "13rm9qpDhROcs14pHIBVlrUje_-1atYDKxZhn8EvmCPM";
+    let allRows = [];
+    let selectedDate = '';
+    let availableDates = [];
+    let activeMetric = 'net';
 
+    // CHARTS
+    let monthlyChartInst = null;
+    let weightChartInst = null;
+    let hydrationChartInst = null;
+    let macroChartInst = null;
+
+    // 1. DATA INITIALIZATION & LIVE SYNC
     async function fetchSheetData() {
-      const syncStatus = document.getElementById("syncStatus");
-      syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-spin"></span><span>Оновлення...</span>`;
+      const syncBadge = document.getElementById('syncBadge');
+      if (syncBadge) syncBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-spin"></span><span>Оновлення...</span>';
+      
       try {
-        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
-        const res = await fetch(url);
-        const text = await res.text();
-        const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-        const data = JSON.parse(jsonStr);
+        const response = await fetch(GVIZ_URL);
+        const text = await response.text();
+        const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+        const data = JSON.parse(jsonString);
 
-        const rows = data.table.rows;
-        if (rows && rows.length > 0) {
-          const parsed = [];
-          for (let r of rows) {
-            const c = r.c;
-            if (!c || !c[0] || !c[0].v) continue;
-            
-            let dVal = String(c[0].v).trim();
-            if (dVal.startsWith("Date(")) {
-              const parts = dVal.match(/Date\((\d+),(\d+),(\d+)\)/);
-              if (parts) {
-                const y = parts[1];
-                const m = String(Number(parts[2]) + 1).padStart(2, '0');
-                const d = String(parts[3]).padStart(2, '0');
-                dVal = `${y}-${m}-${d}`;
-              }
-            } else if (dVal.includes(".")) {
-              const p = dVal.split(".");
-              if (p.length === 3) dVal = `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+        if (!data.table || !data.table.rows) throw new Error('Порожня таблиця');
+
+        allRows = [];
+        data.table.rows.forEach(r => {
+          if (!r.c) return;
+          const getVal = idx => (r.c[idx] ? (r.c[idx].v !== null ? r.c[idx].v : '') : '');
+
+          let dateVal = getVal(0);
+          if (typeof dateVal === 'string' && dateVal.startsWith('Date(')) {
+            const parts = dateVal.match(/Date\((\d+),(\d+),(\d+)\)/);
+            if (parts) {
+              const y = parts[1];
+              const m = String(parseInt(parts[2]) + 1).padStart(2, '0');
+              const d = String(parts[3]).padStart(2, '0');
+              dateVal = `${y}-${m}-${d}`;
             }
-
-            const getNum = (idx) => {
-              if (!c[idx] || c[idx].v === null || c[idx].v === undefined) return 0;
-              const val = Number(c[idx].v);
-              return isNaN(val) ? 0 : val;
-            };
-
-            const item = {
-              date: dVal,
-              meal: c[1] ? String(c[1].v || "").trim() : "Сніданок",
-              name: c[2] ? String(c[2].v || "").trim() : "",
-              qty: c[3] ? String(c[3].v || "").trim() : "",
-              cal: getNum(4),
-              p: getNum(5),
-              f: getNum(6),
-              c: getNum(7),
-              fiber: getNum(8),
-              burned: getNum(9),
-              water: getNum(10),
-              effWater: getNum(11),
-              weight: c[12] && c[12].v ? Number(c[12].v) : null,
-              notes: c[13] ? String(c[13].v || "").trim() : ""
-            };
-            if (item.name || item.weight) parsed.push(item);
           }
-          if (parsed.length > 0) rawRecords = parsed;
-        }
-        syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Live Sync OK</span>`;
-      } catch (e) {
-        console.warn("Fetch fallback:", e);
-        syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span><span>Таблиця підключена</span>`;
+
+          if (!dateVal || dateVal === 'Дата' || String(dateVal).includes('Загалом')) return;
+
+          const meal = String(getVal(1)).trim();
+          const name = String(getVal(2)).trim();
+          const weight = String(getVal(3)).trim();
+          const cal = safeNum(getVal(4));
+          const prot = safeNum(getVal(5));
+          const fat = safeNum(getVal(6));
+          const carb = safeNum(getVal(7));
+          const fiber = safeNum(getVal(8));
+          const burn = safeNum(getVal(9));
+          const water = safeNum(getVal(10));
+          const effWater = safeNum(getVal(11));
+          const bodyWeight = safeNum(getVal(12));
+          const notes = String(getVal(13)).trim();
+
+          allRows.push({
+            date: dateVal,
+            meal,
+            name,
+            weight,
+            cal,
+            prot,
+            fat,
+            carb,
+            fiber,
+            burn,
+            water,
+            effWater,
+            bodyWeight,
+            notes
+          });
+        });
+
+        if (syncBadge) syncBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span>Live Sync</span>';
+        initApp();
+      } catch (err) {
+        console.warn('Google Sheet fetch error:', err);
+        if (syncBadge) syncBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Офлайн дані</span>';
       }
-      renderDashboard();
     }
 
-    function init() {
-      const dates = Array.from(new Set(rawRecords.map(r => r.date))).sort();
+    function safeNum(val) {
+      if (typeof val === 'number') return isNaN(val) ? 0 : val;
+      if (!val) return 0;
+      let clean = String(val).replace(/,/g, '.').replace(/[^\d.-]/g, '');
+      let n = parseFloat(clean);
+      if (isNaN(n) || n > 20000) return 0; // Filter corrupted serial dates
+      return n;
+    }
+
+    // 2. INIT
+    function initApp() {
+      availableDates = [...new Set(allRows.map(r => r.date))].filter(Boolean).sort();
+      
       const todayISO = new Date().toISOString().split('T')[0];
-      if (dates.includes(todayISO)) {
-        currentDate = todayISO;
-      } else if (dates.length > 0) {
-        currentDate = dates[dates.length - 1];
+      if (availableDates.includes(todayISO)) {
+        selectedDate = todayISO;
+      } else if (availableDates.length > 0) {
+        selectedDate = availableDates[availableDates.length - 1];
+      } else {
+        selectedDate = todayISO;
       }
-      document.getElementById('datePicker').value = currentDate;
-      fetchSheetData();
+
+      document.getElementById('datePicker').value = selectedDate;
+      renderCurrentDay();
+      renderCharts();
+      renderWeightTable();
+      selectMetric(activeMetric);
+    }
+
+    function onDateSelect(newDate) {
+      selectedDate = newDate;
+      renderCurrentDay();
+      renderCharts();
     }
 
     function changeDate(delta) {
-      const d = new Date(currentDate);
-      d.setDate(d.getDate() + delta);
-      currentDate = d.toISOString().split('T')[0];
-      document.getElementById('datePicker').value = currentDate;
-      renderDashboard();
-    }
-
-    function onDateSelect(val) {
-      if (val) {
-        currentDate = val;
-        renderDashboard();
+      const idx = availableDates.indexOf(selectedDate);
+      if (idx !== -1) {
+        let newIdx = idx + delta;
+        if (newIdx >= 0 && newIdx < availableDates.length) {
+          selectedDate = availableDates[newIdx];
+          document.getElementById('datePicker').value = selectedDate;
+          renderCurrentDay();
+          renderCharts();
+          return;
+        }
       }
+      let d = new Date(selectedDate);
+      d.setDate(d.getDate() + delta);
+      selectedDate = d.toISOString().split('T')[0];
+      document.getElementById('datePicker').value = selectedDate;
+      renderCurrentDay();
+      renderCharts();
     }
 
     function goToToday() {
       const todayISO = new Date().toISOString().split('T')[0];
-      currentDate = todayISO;
-      document.getElementById('datePicker').value = currentDate;
-      renderDashboard();
+      selectedDate = todayISO;
+      document.getElementById('datePicker').value = selectedDate;
+      renderCurrentDay();
+      renderCharts();
     }
 
-    function getDayTotals(targetDate) {
-      const dayRecs = rawRecords.filter(r => r.date === targetDate);
-      const totals = { cal: 0, burned: 0, net: 0, p: 0, f: 0, c: 0, fiber: 0, water: 0, effWater: 0, weight: null };
-      for (let r of dayRecs) {
-        totals.cal += r.cal || 0;
-        totals.burned += r.burned || 0;
-        totals.p += r.p || 0;
-        totals.f += r.f || 0;
-        totals.c += r.c || 0;
-        totals.fiber += r.fiber || 0;
-        totals.water += r.water || 0;
-        totals.effWater += r.effWater || 0;
-        if (r.weight && r.weight > 30 && r.weight < 250) totals.weight = r.weight;
+    // 3. RENDER CURRENT DAY STATS & MEALS
+    function renderCurrentDay() {
+      const dayRows = allRows.filter(r => r.date === selectedDate);
+      
+      let totCal = 0, totProt = 0, totFat = 0, totCarb = 0, totFiber = 0, totBurn = 0, totEffWater = 0;
+      let dayWeight = null;
+
+      dayRows.forEach(r => {
+        totCal += r.cal;
+        totProt += r.prot;
+        totFat += r.fat;
+        totCarb += r.carb;
+        totFiber += r.fiber;
+        totBurn += r.burn;
+        totEffWater += r.effWater;
+        if (r.bodyWeight > 0) dayWeight = r.bodyWeight;
+      });
+
+      const netCal = totCal - totBurn;
+
+      // Update Header & Badge Labels
+      const formattedDate = formatDateUkrainian(selectedDate);
+      document.getElementById('journalDateLabel').innerText = formattedDate;
+
+      // 1. NET BALANCE CARD
+      document.getElementById('val-net').innerText = Math.round(netCal);
+      const netPct = Math.round((netCal / NORMS.cal) * 100);
+      document.getElementById('pct-net').innerText = `${netPct}%`;
+      document.getElementById('bar-net').style.width = `${Math.min(netPct, 100)}%`;
+      
+      const badgeNet = document.getElementById('badge-net');
+      const valNetEl = document.getElementById('val-net');
+      const barNet = document.getElementById('bar-net');
+
+      if (netCal > NORMS.cal) {
+        badgeNet.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-950/80 text-rose-300 border border-rose-800';
+        badgeNet.innerText = `+${Math.round(netCal - NORMS.cal)} ккал Профіцит`;
+        valNetEl.className = 'text-2xl sm:text-3xl font-black tracking-tight text-rose-400';
+        barNet.className = 'h-2 rounded-full transition-all duration-500 bg-rose-500';
+      } else if (netPct >= 70) {
+        badgeNet.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800';
+        badgeNet.innerText = 'В нормі';
+        valNetEl.className = 'text-2xl sm:text-3xl font-black tracking-tight text-emerald-400';
+        barNet.className = 'h-2 rounded-full transition-all duration-500 bg-emerald-500';
+      } else {
+        badgeNet.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-950/80 text-amber-300 border border-amber-800';
+        badgeNet.innerText = 'Недобір';
+        valNetEl.className = 'text-2xl sm:text-3xl font-black tracking-tight text-amber-400';
+        barNet.className = 'h-2 rounded-full transition-all duration-500 bg-amber-500';
       }
-      totals.net = totals.cal - totals.burned;
-      return totals;
+      document.getElementById('sub-net').innerText = `${Math.round(totCal)} − ${Math.round(totBurn)} ккал`;
+
+      // 2. CONSUMED CALORIES
+      document.getElementById('val-cal').innerText = Math.round(totCal);
+      const calPct = Math.round((totCal / NORMS.cal) * 100);
+      document.getElementById('pct-cal').innerText = `${calPct}%`;
+      document.getElementById('bar-cal').style.width = `${Math.min(calPct, 100)}%`;
+      document.getElementById('sub-cal').innerText = totCal <= NORMS.cal ? `${Math.round(NORMS.cal - totCal)} ккал` : `+${Math.round(totCal - NORMS.cal)} ккал`;
+      document.getElementById('badge-cal').innerText = calPct >= 100 ? 'Виконано' : `${calPct}%`;
+
+      // 3. BURNED (GARMIN)
+      document.getElementById('val-burn').innerText = Math.round(totBurn);
+      const burnPct = Math.round((totBurn / NORMS.burn) * 100);
+      document.getElementById('pct-burn').innerText = `${burnPct}%`;
+      document.getElementById('bar-burn').style.width = `${Math.min(burnPct, 100)}%`;
+      document.getElementById('badge-burn').innerText = burnPct >= 100 ? 'Ціль досягнуто' : `${burnPct}%`;
+
+      // NUTRIENTS
+      setNutrientCard('prot', totProt, NORMS.prot, 'г');
+      setNutrientCard('fat', totFat, NORMS.fat, 'г');
+      setNutrientCard('carb', totCarb, NORMS.carb, 'г');
+      setNutrientCard('fiber', totFiber, NORMS.fiber, 'г');
+      setNutrientCard('water', totEffWater, NORMS.water, 'мл');
+
+      // RENDER MEALS
+      renderMeals(dayRows);
     }
 
-    function getMonthlyAggregatedData() {
-      const curYearMonth = currentDate.substring(0, 7);
-      const daysMap = {};
+    function setNutrientCard(id, val, norm, unit) {
+      document.getElementById(`val-${id}`).innerText = Math.round(val);
+      const pct = Math.round((val / norm) * 100);
+      document.getElementById(`pct-${id}`).innerText = `${pct}%`;
+      document.getElementById(`bar-${id}`).style.width = `${Math.min(pct, 100)}%`;
+      const diff = norm - val;
+      document.getElementById(`sub-${id}`).innerText = diff > 0 ? `${Math.round(diff)} ${unit}` : `+${Math.round(Math.abs(diff))} ${unit}`;
+    }
 
-      for (let r of rawRecords) {
-        if (!r.date.startsWith(curYearMonth)) continue;
-        if (!daysMap[r.date]) {
-          daysMap[r.date] = { date: r.date, cal: 0, burned: 0, net: 0, p: 0, f: 0, c: 0, fiber: 0, water: 0, effWater: 0, weight: null };
+    // 4. RENDER 6 MEAL SECTIONS
+    function renderMeals(dayRows) {
+      const mealSections = [
+        { name: 'Сніданок', icon: '🌅', color: 'from-amber-500/20 to-orange-500/10 border-amber-500/30' },
+        { name: 'Перекус 1', icon: '☕', color: 'from-sky-500/20 to-blue-500/10 border-sky-500/30' },
+        { name: 'Обід', icon: '🍲', color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30' },
+        { name: 'Перекус 2', icon: '🍎', color: 'from-purple-500/20 to-indigo-500/10 border-purple-500/30' },
+        { name: 'Вечеря', icon: '🍽️', color: 'from-rose-500/20 to-red-500/10 border-rose-500/30' },
+        { name: 'Перекус 3', icon: '🌙', color: 'from-cyan-500/20 to-blue-500/10 border-cyan-500/30' }
+      ];
+
+      const container = document.getElementById('mealsContainer');
+      container.innerHTML = '';
+
+      mealSections.forEach(sec => {
+        // Exclude activity and weigh-in rows
+        const items = dayRows.filter(r => r.meal.toLowerCase() === sec.name.toLowerCase() && !r.name.includes('зважування') && !r.meal.includes('Активність'));
+
+        let secCal = 0, secProt = 0, secFat = 0, secCarb = 0;
+        items.forEach(it => {
+          secCal += it.cal;
+          secProt += it.prot;
+          secFat += it.fat;
+          secCarb += it.carb;
+        });
+
+        const card = document.createElement('div');
+        card.className = `bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm flex flex-col justify-between`;
+
+        let itemsHtml = '';
+        if (items.length === 0) {
+          itemsHtml = '<p class="text-xs text-slate-500 italic py-2">Немає записів</p>';
+        } else {
+          itemsHtml = items.map(it => {
+            let itemIcon = '🍽️';
+            let nameLower = it.name.toLowerCase();
+            let isAlcohol = nameLower.includes('пиво') || nameLower.includes('горілка') || nameLower.includes('наливк') || nameLower.includes('вино');
+            let isDrink = nameLower.includes('вода') || nameLower.includes('кава') || nameLower.includes('тонік') || nameLower.includes('кола') || nameLower.includes('пепсі') || nameLower.includes('лате');
+
+            if (isAlcohol) itemIcon = '🍺';
+            else if (nameLower.includes('кава') || nameLower.includes('лате')) itemIcon = '☕';
+            else if (nameLower.includes('вода')) itemIcon = '💧';
+            else if (nameLower.includes('кола') || nameLower.includes('тонік')) itemIcon = '🥤';
+            else if (nameLower.includes('салат') || nameLower.includes('овоч')) itemIcon = '🥗';
+            else if (nameLower.includes('млинц') || nameLower.includes('медовик') || nameLower.includes('торт') || nameLower.includes('вафл')) itemIcon = '🥞';
+
+            let hydBadge = '';
+            if (it.effWater !== 0) {
+              if (it.effWater < 0) {
+                hydBadge = `<span class="text-[10px] font-bold text-rose-400 bg-rose-950/80 border border-rose-800/80 px-1.5 py-0.5 rounded">⚠️ ${it.effWater}мл (зневоднення)</span>`;
+              } else {
+                hydBadge = `<span class="text-[10px] font-bold text-cyan-400 bg-cyan-950/80 border border-cyan-800/80 px-1.5 py-0.5 rounded">💧 +${it.effWater}мл</span>`;
+              }
+            }
+
+            return `
+              <div class="py-2 flex items-start justify-between gap-2 border-b border-slate-800/50 last:border-0">
+                <div class="flex items-start gap-2">
+                  <span class="text-base mt-0.5">${itemIcon}</span>
+                  <div>
+                    <div class="text-xs sm:text-sm font-semibold text-slate-100">${it.name}</div>
+                    <div class="text-[11px] text-slate-400 flex flex-wrap items-center gap-1.5 mt-0.5">
+                      ${it.weight ? `<span class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-300 font-medium">${it.weight}</span>` : ''}
+                      <span>Б: ${it.prot}г • Ж: ${it.fat}г • В: ${it.carb}г</span>
+                      ${hydBadge}
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs sm:text-sm font-black ${it.cal > 0 ? 'text-amber-400' : 'text-slate-500'}">
+                    ${it.cal > 0 ? `${Math.round(it.cal)} ккал` : '0 ккал'}
+                  </span>
+                </div>
+              </div>
+            `;
+          }).join('');
         }
-        daysMap[r.date].cal += r.cal || 0;
-        daysMap[r.date].burned += r.burned || 0;
-        daysMap[r.date].p += r.p || 0;
-        daysMap[r.date].f += r.f || 0;
-        daysMap[r.date].c += r.c || 0;
-        daysMap[r.date].fiber += r.fiber || 0;
-        daysMap[r.date].water += r.water || 0;
-        daysMap[r.date].effWater += r.effWater || 0;
-        if (r.weight) daysMap[r.date].weight = r.weight;
-      }
 
-      const sortedDates = Object.keys(daysMap).sort();
-      return sortedDates.map(d => {
-        const item = daysMap[d];
-        item.net = item.cal - item.burned;
-        return item;
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+              <div class="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-200">
+                <span class="text-base">${sec.icon}</span>
+                <span>${sec.name}</span>
+              </div>
+              <span class="text-xs font-black ${secCal > 0 ? 'text-amber-400 bg-amber-950/60 border border-amber-800/60' : 'text-slate-500 bg-slate-800/50 border border-slate-700/50'} px-2 py-0.5 rounded-lg">
+                ${Math.round(secCal)} ккал
+              </span>
+            </div>
+            <div class="space-y-0.5">
+              ${itemsHtml}
+            </div>
+          </div>
+          ${items.length > 0 ? `
+            <div class="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+              <span>БЖВ прийому:</span>
+              <span class="font-semibold text-slate-300">Б: ${Math.round(secProt)}г • Ж: ${Math.round(secFat)}г • В: ${Math.round(secCarb)}г</span>
+            </div>
+          ` : ''}
+        `;
+
+        container.appendChild(card);
       });
     }
 
-    function renderDashboard() {
-      const todayTotals = getDayTotals(currentDate);
-
-      const valBalance = document.getElementById("val-balance");
-      const badgeBalance = document.getElementById("badge-balance");
-      const progBalance = document.getElementById("prog-balance");
-      const subBalance = document.getElementById("sub-balance");
-
-      valBalance.innerText = Math.round(todayTotals.net);
-      const balancePct = Math.round((todayTotals.net / NORMS.calories) * 100);
-      progBalance.style.width = Math.min(100, Math.max(0, balancePct)) + '%';
-
-      if (todayTotals.net > NORMS.calories) {
-        valBalance.className = "text-3xl font-extrabold text-rose-400";
-        badgeBalance.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-rose-950 text-rose-400 border border-rose-800/40";
-        badgeBalance.innerText = `+${Math.round(todayTotals.net - NORMS.calories)} ккал (Профіцит)`;
-        progBalance.className = "bg-rose-500 h-full rounded-full transition-all duration-500";
-      } else if (balancePct >= 70) {
-        valBalance.className = "text-3xl font-extrabold text-emerald-400";
-        badgeBalance.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/40";
-        badgeBalance.innerText = `${balancePct}% (В нормі)`;
-        progBalance.className = "bg-emerald-500 h-full rounded-full transition-all duration-500";
-      } else {
-        valBalance.className = "text-3xl font-extrabold text-amber-400";
-        badgeBalance.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-950 text-amber-400 border border-amber-800/40";
-        badgeBalance.innerText = `${balancePct}% (Недобір)`;
-        progBalance.className = "bg-amber-500 h-full rounded-full transition-all duration-500";
-      }
-      subBalance.innerText = `Спожито ${Math.round(todayTotals.cal)} − Витрачено ${Math.round(todayTotals.burned)}`;
-
-      document.getElementById("val-consumed").innerText = Math.round(todayTotals.cal);
-      const consumedPct = Math.round((todayTotals.cal / NORMS.calories) * 100);
-      document.getElementById("badge-consumed").innerText = `${consumedPct}%`;
-      document.getElementById("prog-consumed").style.width = Math.min(100, consumedPct) + '%';
-      const remainingCal = NORMS.calories - todayTotals.cal;
-      document.getElementById("sub-consumed").innerText = remainingCal >= 0 ? `Залишилось: ${Math.round(remainingCal)} ккал` : `Перевищено на ${Math.round(-remainingCal)} ккал`;
-
-      document.getElementById("val-burned").innerText = Math.round(todayTotals.burned);
-      const burnedPct = Math.round((todayTotals.burned / NORMS.burned) * 100);
-      document.getElementById("badge-burned").innerText = `${burnedPct}%`;
-      document.getElementById("prog-burned").style.width = Math.min(100, burnedPct) + '%';
-
-      const setBar = (id, val, norm) => {
-        document.getElementById(`val-${id}`).innerText = typeof val === 'number' ? (val % 1 === 0 ? val : val.toFixed(1)) : val;
-        const pct = Math.round((val / norm) * 100);
-        document.getElementById(`pct-${id}`).innerText = `${pct}%`;
-        document.getElementById(`prog-${id}`).style.width = Math.min(100, pct) + '%';
-      };
-
-      setBar('protein', todayTotals.p, NORMS.protein);
-      setBar('fat', todayTotals.f, NORMS.fat);
-      setBar('carbs', todayTotals.c, NORMS.carbs);
-      setBar('fiber', todayTotals.fiber, NORMS.fiber);
-      setBar('water', Math.round(todayTotals.effWater), NORMS.water);
-
-      renderMealSections();
-      renderWeightTable();
-      renderDynamicMetricChart();
-      renderWeightLineChart();
-      renderMacroDonutChart(todayTotals);
-      renderHydrationBarChart();
-    }
-
+    // 5. MONTHLY INTERACTIVE METRIC CHART
     function selectMetric(metricKey) {
-      selectedMetricKey = metricKey;
-      const allCards = ['balance', 'consumed', 'burned', 'protein', 'fat', 'carbs', 'fiber', 'water'];
-      allCards.forEach(k => {
+      activeMetric = metricKey;
+
+      // Update active card styling
+      ['net', 'cal', 'burn', 'prot', 'fat', 'carb', 'fiber', 'water'].forEach(k => {
         const el = document.getElementById(`card-${k}`);
         if (el) {
           if (k === metricKey) el.classList.add('card-active');
@@ -600,482 +819,403 @@
         }
       });
 
-      renderDynamicMetricChart();
-      document.getElementById('metricDetailPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    function renderDynamicMetricChart() {
-      const monthData = getMonthlyAggregatedData();
-      const labels = monthData.map(d => {
-        const parts = d.date.split('-');
-        return `${parts[2]}.${parts[1]}`;
-      });
-
-      const METRIC_CONFIGS = {
-        balance: { title: "Баланс калорій (Net Calories)", icon: "⚡", norm: NORMS.calories, unit: "ккал", getValue: d => d.net, color: "#10b981", type: "bar" },
-        consumed: { title: "Спожиті калорії", icon: "🍽️", norm: NORMS.calories, unit: "ккал", getValue: d => d.cal, color: "#3b82f6", type: "bar" },
-        burned: { title: "Активність та спалені калорії (Garmin)", icon: "🔥", norm: NORMS.burned, unit: "ккал", getValue: d => d.burned, color: "#f59e0b", type: "bar" },
-        protein: { title: "Білки (г)", icon: "🥩", norm: NORMS.protein, unit: "г", getValue: d => d.p, color: "#6366f1", type: "line" },
-        fat: { title: "Жири (г)", icon: "🥑", norm: NORMS.fat, unit: "г", getValue: d => d.f, color: "#f43f5e", type: "line" },
-        carbs: { title: "Вуглеводи (г)", icon: "🍞", norm: NORMS.carbs, unit: "г", getValue: d => d.c, color: "#f59e0b", type: "line" },
-        fiber: { title: "Клітковина (г)", icon: "🌾", norm: NORMS.fiber, unit: "г", getValue: d => d.fiber, color: "#14b8a6", type: "line" },
-        water: { title: "Ефективна гідратація (мл)", icon: "💧", norm: NORMS.water, unit: "мл", getValue: d => d.effWater, color: "#06b6d4", type: "bar" }
+      const titles = {
+        net: 'Баланс калорій (Net = Спожито − Витрачено)',
+        cal: 'Споживання калорій (ккал)',
+        burn: 'Активність за Garmin (ккал)',
+        prot: 'Споживання білків (г)',
+        fat: 'Споживання жирів (г)',
+        carb: 'Споживання вуглеводів (г)',
+        fiber: 'Споживання клітковини (г)',
+        water: 'Ефективна гідратація (мл)'
       };
 
-      const cfg = METRIC_CONFIGS[selectedMetricKey] || METRIC_CONFIGS['balance'];
-      document.getElementById('metricTitle').innerText = `Місячний аналіз: ${cfg.title}`;
-      document.getElementById('metricIcon').innerText = cfg.icon;
+      const normUnits = {
+        net: '2450 ккал',
+        cal: '2450 ккал',
+        burn: '700 ккал',
+        prot: '137 г',
+        fat: '76 г',
+        carb: '305 г',
+        fiber: '30 г',
+        water: '2650 мл'
+      };
 
-      const dataValues = monthData.map(d => Math.round(cfg.getValue(d)));
-      const normValue = cfg.norm;
+      document.getElementById('monthlyChartTitle').innerText = `Місячний аналіз: ${titles[metricKey]}`;
+      document.getElementById('chartNormLabel').innerText = normUnits[metricKey];
 
-      let onTargetCount = 0, totalSum = 0;
-      dataValues.forEach(v => {
-        totalSum += v;
-        if (selectedMetricKey === 'balance' || selectedMetricKey === 'consumed') {
-          if (v <= normValue && v >= normValue * 0.7) onTargetCount++;
-        } else if (selectedMetricKey === 'burned' || selectedMetricKey === 'protein' || selectedMetricKey === 'fiber' || selectedMetricKey === 'water') {
-          if (v >= normValue * 0.8) onTargetCount++;
-        } else {
-          if (v <= normValue * 1.1) onTargetCount++;
-        }
-      });
-      const avg = dataValues.length > 0 ? Math.round(totalSum / dataValues.length) : 0;
-
-      const pillsContainer = document.getElementById('metricStatsPills');
-      pillsContainer.innerHTML = `
-        <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">Добова норма: <b class="text-white">${normValue} ${cfg.unit}</b></span>
-        <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">Середнє за місяць: <b class="text-emerald-400">${avg} ${cfg.unit}</b></span>
-        <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">Днів у нормі: <b class="text-teal-300">${onTargetCount} з ${dataValues.length}</b></span>
-      `;
-
-      const bgColors = dataValues.map(v => {
-        if (selectedMetricKey === 'balance') {
-          if (v > normValue) return '#f43f5e';
-          if (v >= normValue * 0.7) return '#10b981';
-          return '#f59e0b';
-        }
-        if (v >= normValue) return '#10b981';
-        if (v >= normValue * 0.7) return '#3b82f6';
-        return '#f59e0b';
+      // Prepare daily totals for all days
+      const daysMap = {};
+      availableDates.forEach(d => {
+        daysMap[d] = { cal: 0, burn: 0, prot: 0, fat: 0, carb: 0, fiber: 0, water: 0 };
       });
 
-      const normLineData = dataValues.map(() => normValue);
-      const maxVal = Math.max(...dataValues, normValue);
-      const suggestedMax = Math.max(normValue * 1.8, maxVal * 1.15);
-
-      if (metricMonthlyChartInstance) metricMonthlyChartInstance.destroy();
-
-      const ctx = document.getElementById('metricMonthlyChart').getContext('2d');
-      metricMonthlyChartInstance = new Chart(ctx, {
-        type: cfg.type,
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Фактичне значення',
-              data: dataValues,
-              backgroundColor: cfg.type === 'bar' ? bgColors : 'rgba(59, 130, 246, 0.15)',
-              borderColor: cfg.type === 'line' ? cfg.color : undefined,
-              borderWidth: cfg.type === 'line' ? 3 : 0,
-              borderRadius: 6,
-              pointBackgroundColor: cfg.color,
-              pointRadius: cfg.type === 'line' ? 5 : 0,
-              fill: cfg.type === 'line'
-            },
-            {
-              type: 'line',
-              label: `Цільова норма (${normValue} ${cfg.unit})`,
-              data: normLineData,
-              borderColor: '#f43f5e',
-              borderWidth: 2,
-              borderDash: [6, 4],
-              pointRadius: 0,
-              fill: false
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: {
-              display: true,
-              labels: { color: '#94a3b8', font: { size: 11, family: 'system-ui' } }
-            },
-            tooltip: {
-              backgroundColor: '#0f172a',
-              titleColor: '#e2e8f0',
-              bodyColor: '#cbd5e1',
-              borderColor: '#334155',
-              borderWidth: 1,
-              padding: 10,
-              callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} ${cfg.unit}`
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: 'rgba(51, 65, 85, 0.25)' },
-              ticks: { color: '#94a3b8', font: { size: 11 } }
-            },
-            y: {
-              grid: { color: 'rgba(51, 65, 85, 0.35)' },
-              ticks: { color: '#94a3b8', font: { size: 11 } },
-              suggestedMax: suggestedMax,
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-
-    function renderWeightLineChart() {
-      const weightMap = {};
-      rawRecords.forEach(r => {
-        if (r.weight && r.weight > 30 && r.weight < 250) {
-          weightMap[r.date] = r.weight;
+      allRows.forEach(r => {
+        if (daysMap[r.date]) {
+          daysMap[r.date].cal += r.cal;
+          daysMap[r.date].burn += r.burn;
+          daysMap[r.date].prot += r.prot;
+          daysMap[r.date].fat += r.fat;
+          daysMap[r.date].carb += r.carb;
+          daysMap[r.date].fiber += r.fiber;
+          daysMap[r.date].water += r.effWater;
         }
       });
 
-      const dates = Object.keys(weightMap).sort();
-      const labels = dates.map(d => {
-        const parts = d.split('-');
-        return `${parts[2]}.${parts[1]}`;
+      const labels = availableDates.map(d => d.slice(8, 10) + '.' + d.slice(5, 7));
+      const values = availableDates.map(d => {
+        const item = daysMap[d];
+        if (metricKey === 'net') return Math.round(item.cal - item.burn);
+        return Math.round(item[metricKey] || 0);
       });
-      const dataValues = dates.map(d => weightMap[d]);
 
-      // Update badge
-      if (dataValues.length > 0) {
-        const latestW = dataValues[dataValues.length - 1];
-        document.getElementById('currentWeightBadge').innerText = `Поточна: ${latestW.toFixed(1)} кг`;
-      }
+      const targetNorm = NORMS[metricKey] || 0;
+      const avgVal = Math.round(values.reduce((a, b) => a + b, 0) / (values.length || 1));
+      document.getElementById('chartAvgLabel').innerText = `${avgVal} ${normUnits[metricKey].split(' ')[1] || ''}`;
 
-      if (weightLineChartInstance) weightLineChartInstance.destroy();
+      // Colors
+      let barColor = '#38bdf8';
+      if (metricKey === 'net') barColor = values.map(v => v > targetNorm ? '#f43f5e' : (v >= targetNorm * 0.7 ? '#10b981' : '#f59e0b'));
+      else if (metricKey === 'cal') barColor = '#fbbf24';
+      else if (metricKey === 'burn') barColor = '#a855f7';
+      else if (metricKey === 'prot') barColor = '#38bdf8';
+      else if (metricKey === 'fat') barColor = '#fb7185';
+      else if (metricKey === 'carb') barColor = '#facc15';
+      else if (metricKey === 'fiber') barColor = '#34d399';
+      else if (metricKey === 'water') barColor = '#06b6d4';
 
-      const ctx = document.getElementById('weightLineChart').getContext('2d');
-      weightLineChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Вага (кг)',
-            data: dataValues,
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.12)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#10b981',
-            pointBorderColor: '#0f172a',
-            pointBorderWidth: 2,
-            pointRadius: 6,
-            pointHoverRadius: 8
-          }]
-        },
-        plugins: [{
-          id: 'weightLabelsAbovePoints',
-          afterDatasetsDraw(chart) {
-            const { ctx, data } = chart;
-            ctx.save();
-            ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
-            ctx.fillStyle = '#34d399';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            chart.getDatasetMeta(0).data.forEach((point, index) => {
-              const val = data.datasets[0].data[index];
-              if (val !== undefined && val !== null) {
-                ctx.fillText(`${val.toFixed(1)}кг`, point.x, point.y - 8);
-              }
-            });
-            ctx.restore();
-          }
-        }],
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `Вага: ${ctx.parsed.y} кг`
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: 'rgba(51, 65, 85, 0.25)' },
-              ticks: { color: '#94a3b8', font: { size: 11 } }
-            },
-            y: {
-              grid: { color: 'rgba(51, 65, 85, 0.35)' },
-              ticks: { color: '#94a3b8', font: { size: 11 } },
-              suggestedMin: 74,
-              suggestedMax: 78
-            }
-          }
+      const ctx = document.getElementById('monthlyChart').getContext('2d');
+      if (monthlyChartInst) monthlyChartInst.destroy();
+
+      // Custom line plugin for target norm line in the center
+      const normLinePlugin = {
+        id: 'normLinePlugin',
+        afterDraw: (chart) => {
+          const yAxis = chart.scales.y;
+          const xAxis = chart.scales.x;
+          if (!yAxis || !xAxis) return;
+          const yPos = yAxis.getPixelForValue(targetNorm);
+
+          const ctx = chart.ctx;
+          ctx.save();
+          ctx.beginPath();
+          ctx.setLineDash([5, 5]);
+          ctx.strokeStyle = '#94a3b8';
+          ctx.lineWidth = 1.5;
+          ctx.moveTo(xAxis.left, yPos);
+          ctx.lineTo(xAxis.right, yPos);
+          ctx.stroke();
+
+          // Label
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = 'bold 10px -apple-system, sans-serif';
+          ctx.fillText(`Ціль: ${targetNorm}`, xAxis.right - 65, yPos - 5);
+          ctx.restore();
         }
-      });
-    }
+      };
 
-    function renderMacroDonutChart(totals) {
-      const p = Math.round(totals.p || 0);
-      const f = Math.round(totals.f || 0);
-      const c = Math.round(totals.c || 0);
+      // Set scale bounds so targetNorm is roughly centered
+      const maxData = Math.max(...values, targetNorm);
+      const suggestedMax = Math.max(targetNorm * 1.8, maxData * 1.15);
 
-      document.getElementById('donutDateLabel').innerText = currentDate.split('-').reverse().join('.');
-      document.getElementById('donutP').innerText = `${p}г`;
-      document.getElementById('donutF').innerText = `${f}г`;
-      document.getElementById('donutC').innerText = `${c}г`;
-
-      if (macroDonutChartInstance) macroDonutChartInstance.destroy();
-
-      const ctx = document.getElementById('macroDonutChart').getContext('2d');
-      const hasData = (p + f + c) > 0;
-
-      macroDonutChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Білки (г)', 'Жири (г)', 'Вуглеводи (г)'],
-          datasets: [{
-            data: hasData ? [p, f, c] : [1, 1, 1],
-            backgroundColor: hasData ? ['#6366f1', '#f43f5e', '#f59e0b'] : ['#334155', '#334155', '#334155'],
-            borderWidth: 0,
-            hoverOffset: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '72%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { color: '#94a3b8', font: { size: 11 } }
-            }
-          }
-        }
-      });
-    }
-
-    function renderHydrationBarChart() {
-      const monthData = getMonthlyAggregatedData();
-      const labels = monthData.map(d => {
-        const parts = d.date.split('-');
-        return `${parts[2]}.${parts[1]}`;
-      });
-      const dataValues = monthData.map(d => Math.round(d.effWater));
-
-      if (hydrationBarChartInstance) hydrationBarChartInstance.destroy();
-
-      const ctx = document.getElementById('hydrationBarChart').getContext('2d');
-      hydrationBarChartInstance = new Chart(ctx, {
+      monthlyChartInst = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: labels,
           datasets: [{
-            label: 'Ефективна гідратація (мл)',
-            data: dataValues,
-            backgroundColor: dataValues.map(v => v >= NORMS.water ? '#06b6d4' : '#0284c7'),
-            borderRadius: 6
+            data: values,
+            backgroundColor: barColor,
+            borderRadius: 6,
+            borderSkipped: false
           }]
         },
-        plugins: [{
-          id: 'hydrationLabelsAboveBars',
-          afterDatasetsDraw(chart) {
-            const { ctx, data } = chart;
-            ctx.save();
-            ctx.font = '600 11px system-ui, -apple-system, sans-serif';
-            ctx.fillStyle = '#93c5fd';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            chart.getDatasetMeta(0).data.forEach((bar, index) => {
-              const val = data.datasets[0].data[index];
-              if (val !== undefined && val !== null && val > 0) {
-                const liters = (val / 1000).toFixed(2) + 'л';
-                ctx.fillText(liters, bar.x, bar.y - 4);
-              }
-            });
-            ctx.restore();
-          }
-        }],
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
             tooltip: {
+              backgroundColor: '#0f172a',
+              titleColor: '#f8fafc',
+              bodyColor: '#38bdf8',
+              borderColor: '#334155',
+              borderWidth: 1,
               callbacks: {
-                label: (ctx) => `${ctx.parsed.y} мл (${(ctx.parsed.y / 1000).toFixed(2)} л)`
+                label: (ctx) => ` Значення: ${ctx.parsed.y} (Ціль: ${targetNorm})`
               }
             }
           },
           scales: {
             x: {
-              grid: { color: 'rgba(51, 65, 85, 0.25)' },
-              ticks: { color: '#94a3b8', font: { size: 11 } }
+              grid: { display: false },
+              ticks: { color: '#94a3b8', font: { size: 11, weight: '600' } }
             },
             y: {
-              grid: { color: 'rgba(51, 65, 85, 0.35)' },
-              ticks: { color: '#94a3b8', font: { size: 11 } },
+              suggestedMin: 0,
+              suggestedMax: suggestedMax,
+              grid: { color: 'rgba(51, 65, 85, 0.4)' },
+              ticks: { color: '#94a3b8', font: { size: 10 } }
+            }
+          }
+        },
+        plugins: [normLinePlugin]
+      });
+    }
+
+    // 6. MAIN ANALYTICS CHARTS (WEIGHT, HYDRATION, MACROS)
+    function renderCharts() {
+      // 1. WEIGHT CHART
+      const weightData = [];
+      availableDates.forEach(d => {
+        const rows = allRows.filter(r => r.date === d && r.bodyWeight > 0);
+        if (rows.length > 0) {
+          weightData.push({
+            date: d.slice(8, 10) + '.' + d.slice(5, 7),
+            weight: rows[rows.length - 1].bodyWeight
+          });
+        }
+      });
+
+      if (weightData.length > 0) {
+        document.getElementById('badge-weight').innerText = `${weightData[weightData.length - 1].weight} кг`;
+      }
+
+      const ctxWeight = document.getElementById('weightChart').getContext('2d');
+      if (weightChartInst) weightChartInst.destroy();
+
+      weightChartInst = new Chart(ctxWeight, {
+        type: 'line',
+        data: {
+          labels: weightData.map(w => w.date),
+          datasets: [{
+            data: weightData.map(w => w.weight),
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 4.5,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              borderColor: '#10b981',
+              borderWidth: 1,
+              callbacks: { label: (ctx) => ` Вага: ${ctx.parsed.y} кг` }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11, weight: '600' } } },
+            y: {
+              suggestedMin: 75.0,
+              suggestedMax: 78.0,
+              grid: { color: 'rgba(51, 65, 85, 0.4)' },
+              ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 0.5 }
+            }
+          }
+        },
+        plugins: [{
+          id: 'weightLabelsPlugin',
+          afterDatasetsDraw: (chart) => {
+            const ctx = chart.ctx;
+            chart.data.datasets.forEach((dataset, i) => {
+              const meta = chart.getDatasetMeta(i);
+              meta.data.forEach((element, index) => {
+                const dataVal = dataset.data[index];
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px -apple-system, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${dataVal}кг`, element.x, element.y - 8);
+              });
+            });
+          }
+        }]
+      });
+
+      // 2. HYDRATION CHART (WITH LITERS LABELS)
+      const hydLabels = availableDates.map(d => d.slice(8, 10) + '.' + d.slice(5, 7));
+      const hydValues = availableDates.map(d => {
+        return Math.round(allRows.filter(r => r.date === d).reduce((acc, cur) => acc + cur.effWater, 0));
+      });
+
+      const ctxHyd = document.getElementById('hydrationChart').getContext('2d');
+      if (hydrationChartInst) hydrationChartInst.destroy();
+
+      hydrationChartInst = new Chart(ctxHyd, {
+        type: 'bar',
+        data: {
+          labels: hydLabels,
+          datasets: [{
+            data: hydValues,
+            backgroundColor: hydValues.map(v => v >= NORMS.water ? '#06b6d4' : '#38bdf8'),
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              borderColor: '#06b6d4',
+              borderWidth: 1,
+              callbacks: { label: (ctx) => ` Вода: ${ctx.parsed.y} мл (${(ctx.parsed.y/1000).toFixed(2)} л)` }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10, weight: '600' } } },
+            y: {
+              suggestedMin: 0,
               suggestedMax: 3500,
-              beginAtZero: true
+              grid: { color: 'rgba(51, 65, 85, 0.4)' },
+              ticks: { color: '#94a3b8', font: { size: 10 } }
+            }
+          }
+        },
+        plugins: [{
+          id: 'litersLabelsPlugin',
+          afterDatasetsDraw: (chart) => {
+            const ctx = chart.ctx;
+            chart.data.datasets.forEach((dataset, i) => {
+              const meta = chart.getDatasetMeta(i);
+              meta.data.forEach((element, index) => {
+                const dataVal = dataset.data[index];
+                if (dataVal > 0) {
+                  const liters = (dataVal / 1000).toFixed(2) + 'л';
+                  ctx.fillStyle = '#38bdf8';
+                  ctx.font = 'bold 9px -apple-system, sans-serif';
+                  ctx.textAlign = 'center';
+                  ctx.fillText(liters, element.x, element.y - 4);
+                }
+              });
+            });
+          }
+        }]
+      });
+
+      // 3. MACRO SPLIT FOR CURRENT DAY
+      const dayRows = allRows.filter(r => r.date === selectedDate);
+      let dayProt = Math.round(dayRows.reduce((a, b) => a + b.prot, 0));
+      let dayFat = Math.round(dayRows.reduce((a, b) => a + b.fat, 0));
+      let dayCarb = Math.round(dayRows.reduce((a, b) => a + b.carb, 0));
+      let totalGrams = dayProt + dayFat + dayCarb;
+
+      document.getElementById('badge-macro-total').innerText = `Разом: ${totalGrams} г`;
+      document.getElementById('legend-prot').innerText = `${dayProt}г (${totalGrams > 0 ? Math.round(dayProt/totalGrams*100):0}%)`;
+      document.getElementById('legend-fat').innerText = `${dayFat}г (${totalGrams > 0 ? Math.round(dayFat/totalGrams*100):0}%)`;
+      document.getElementById('legend-carb').innerText = `${dayCarb}г (${totalGrams > 0 ? Math.round(dayCarb/totalGrams*100):0}%)`;
+
+      const ctxMacro = document.getElementById('macroChart').getContext('2d');
+      if (macroChartInst) macroChartInst.destroy();
+
+      macroChartInst = new Chart(ctxMacro, {
+        type: 'doughnut',
+        data: {
+          labels: ['Білки', 'Жири', 'Вуглеводи'],
+          datasets: [{
+            data: totalGrams > 0 ? [dayProt, dayFat, dayCarb] : [1, 1, 1],
+            backgroundColor: totalGrams > 0 ? ['#38bdf8', '#fb7185', '#facc15'] : ['#334155', '#334155', '#334155'],
+            borderWidth: 2,
+            borderColor: '#0f172a'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              callbacks: {
+                label: (ctx) => ` ${ctx.label}: ${ctx.raw} г (${totalGrams > 0 ? Math.round(ctx.raw/totalGrams*100):0}%)`
+              }
             }
           }
         }
       });
     }
 
-    function renderMealSections() {
-      const container = document.getElementById('mealSectionsContainer');
-      document.getElementById('mealLogDateLabel').innerText = currentDate.split('-').reverse().join('.');
-      
-      const dayRecs = rawRecords.filter(r => r.date === currentDate && r.meal !== 'Активність' && !r.weight);
-      document.getElementById('totalItemsCount').innerText = `${dayRecs.length} страв / напоїв`;
-
-      const SECTION_ORDER = ['Сніданок', 'Перекус 1', 'Обід', 'Перекус 2', 'Вечеря', 'Перекус 3'];
-      
-      let html = '';
-      SECTION_ORDER.forEach(secName => {
-        const secItems = dayRecs.filter(r => r.meal.toLowerCase().trim() === secName.toLowerCase());
-        if (secItems.length === 0) return;
-
-        let secCal = 0, secP = 0, secF = 0, secC = 0;
-        secItems.forEach(i => {
-          secCal += i.cal || 0;
-          secP += i.p || 0;
-          secF += i.f || 0;
-          secC += i.c || 0;
-        });
-
-        html += `
-          <div class="bg-slate-800/40 border border-slate-800 rounded-xl p-3.5 space-y-2">
-            <div class="flex items-center justify-between pb-2 border-b border-slate-700/60 text-xs">
-              <span class="font-bold text-slate-200 uppercase tracking-wider">${secName}</span>
-              <span class="text-slate-400 font-semibold">${Math.round(secCal)} ккал <span class="text-slate-500 font-normal">(Б:${secP.toFixed(1)} Ж:${secF.toFixed(1)} В:${secC.toFixed(1)})</span></span>
-            </div>
-            <div class="space-y-1.5">
-        `;
-
-        secItems.forEach(item => {
-          let icon = '🍽️';
-          let waterBadge = '';
-          const nameLower = item.name.toLowerCase();
-
-          if (nameLower.includes('горілк') || nameLower.includes('віскі') || nameLower.includes('коньяк')) {
-            icon = '🥃';
-            waterBadge = `<span class="text-xs bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded-full font-medium">⚠️ -300мл (дегідрація)</span>`;
-          } else if (nameLower.includes('пив') || nameLower.includes('сидр')) {
-            icon = '🍺';
-            waterBadge = `<span class="text-xs bg-amber-950 text-amber-300 border border-amber-800 px-2 py-0.5 rounded-full font-medium">💧 +${item.effWater}мл (60%)</span>`;
-          } else if (nameLower.includes('кав') || nameLower.includes('чай')) {
-            icon = '☕';
-            waterBadge = `<span class="text-xs bg-amber-950/60 text-amber-400 border border-amber-800/40 px-2 py-0.5 rounded-full font-medium">💧 +${item.effWater}мл (80%)</span>`;
-          } else if (nameLower.includes('вод')) {
-            icon = '💧';
-            waterBadge = `<span class="text-xs bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded-full font-medium">💧 +${item.effWater}мл</span>`;
-          } else if (nameLower.includes('кол') || nameLower.includes('пепс') || nameLower.includes('тонік') || nameLower.includes('енергетик')) {
-            icon = '🥤';
-            waterBadge = `<span class="text-xs bg-indigo-950 text-indigo-400 border border-indigo-800 px-2 py-0.5 rounded-full font-medium">💧 +${item.effWater}мл (85%)</span>`;
-          } else if (nameLower.includes('кавун')) {
-            icon = '🍉';
-            waterBadge = `<span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-medium">💧 +${item.effWater}мл (92% води)</span>`;
-          }
-
-          html += `
-            <div class="flex items-center justify-between text-xs py-1 px-2 rounded-lg hover:bg-slate-800/60 transition">
-              <div class="flex items-center gap-2">
-                <span>${icon}</span>
-                <span class="font-medium text-slate-200">${item.name}</span>
-                <span class="text-slate-500">${item.qty || ''}</span>
-                ${waterBadge}
-              </div>
-              <div class="text-slate-400 font-medium">
-                <span class="text-slate-200 font-bold">${item.cal} ккал</span>
-                <span class="text-slate-500 ml-1.5 hidden sm:inline">(Б:${item.p} Ж:${item.f} В:${item.c})</span>
-              </div>
-            </div>
-          `;
-        });
-
-        html += `</div></div>`;
-      });
-
-      if (!html) {
-        html = `<p class="text-xs text-slate-500 text-center py-6">На цей день ще немає записів їжі або напоїв.</p>`;
-      }
-      container.innerHTML = html;
-    }
-
+    // 7. WEIGH-IN HISTORY TABLE (REVERSE SORTED + BMI)
     function renderWeightTable() {
       const tbody = document.getElementById('weightTableBody');
-      const weightMap = {};
-      rawRecords.forEach(r => {
-        if (r.weight && r.weight > 30 && r.weight < 250) weightMap[r.date] = r.weight;
+      tbody.innerHTML = '';
+
+      // Collect all weigh-in entries
+      const weightLogs = [];
+      allRows.forEach(r => {
+        if (r.bodyWeight > 0) {
+          weightLogs.push({
+            date: r.date,
+            weight: r.bodyWeight
+          });
+        }
       });
 
-      const sortedAscDates = Object.keys(weightMap).sort();
-      const rowsData = [];
+      // Deduplicate by date keeping the last log for that date
+      const dedupMap = {};
+      weightLogs.forEach(w => dedupMap[w.date] = w.weight);
 
-      for (let i = 0; i < sortedAscDates.length; i++) {
-        const d = sortedAscDates[i];
-        const w = weightMap[d];
-        let delta = 0;
-        if (i > 0) delta = w - weightMap[sortedAscDates[i - 1]];
-        
-        const bmi = (w / (USER_HEIGHT_M * USER_HEIGHT_M)).toFixed(1);
-        let bmiCategory = "Норма";
-        let bmiClass = "bg-emerald-950 text-emerald-400 border-emerald-800/40";
-        if (bmi < 18.5) {
-          bmiCategory = "Недостатня";
-          bmiClass = "bg-amber-950 text-amber-400 border-amber-800/40";
-        } else if (bmi >= 25 && bmi < 29.9) {
-          bmiCategory = "Надлишкова";
-          bmiClass = "bg-amber-950 text-amber-400 border-amber-800/40";
-        } else if (bmi >= 30) {
-          bmiCategory = "Ожиріння";
-          bmiClass = "bg-rose-950 text-rose-400 border-rose-800/40";
-        }
+      const sortedDates = Object.keys(dedupMap).sort().reverse(); // Newest on top!
 
-        rowsData.push({ date: d, weight: w, delta: delta, bmi: bmi, bmiCategory: bmiCategory, bmiClass: bmiClass });
-      }
+      sortedDates.forEach((d, idx) => {
+        const curW = dedupMap[d];
+        const nextD = sortedDates[idx + 1];
+        let diffHtml = '<span class="text-slate-400">—</span>';
 
-      rowsData.reverse();
-
-      let html = '';
-      rowsData.slice(0, 10).forEach((row, idx) => {
-        let deltaBadge = `<span class="text-slate-400 font-medium">0.0 кг</span>`;
-        if (idx < rowsData.length - 1 || row.delta !== 0) {
-          if (row.delta > 0) {
-            deltaBadge = `<span class="text-rose-400 font-bold flex items-center gap-1">🔺 +${row.delta.toFixed(1)} кг</span>`;
-          } else if (row.delta < 0) {
-            deltaBadge = `<span class="text-emerald-400 font-bold flex items-center gap-1">🟢 ${row.delta.toFixed(1)} кг</span>`;
+        if (nextD && dedupMap[nextD]) {
+          const prevW = dedupMap[nextD];
+          const diff = (curW - prevW).toFixed(1);
+          if (diff > 0) {
+            diffHtml = `<span class="text-rose-400 font-bold bg-rose-950/60 px-2 py-0.5 rounded border border-rose-800/50">+${diff} кг</span>`;
+          } else if (diff < 0) {
+            diffHtml = `<span class="text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/50">${diff} кг</span>`;
+          } else {
+            diffHtml = `<span class="text-slate-400 font-semibold bg-slate-800/60 px-2 py-0.5 rounded">0.0 кг</span>`;
           }
         }
 
-        const formattedDate = row.date.split('-').reverse().join('.');
+        // BMI Calculation: Weight / (Height in m)^2
+        const bmi = (curW / (NORMS.height * NORMS.height)).toFixed(1);
+        let bmiBadge = '';
+        if (bmi < 18.5) {
+          bmiBadge = `<span class="text-amber-400 bg-amber-950/60 border border-amber-800/50 px-2 py-0.5 rounded text-[11px]">${bmi} (Дефіцит)</span>`;
+        } else if (bmi <= 24.9) {
+          bmiBadge = `<span class="text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2 py-0.5 rounded text-[11px]">${bmi} (Норма)</span>`;
+        } else {
+          bmiBadge = `<span class="text-rose-400 bg-rose-950/60 border border-rose-800/50 px-2 py-0.5 rounded text-[11px]">${bmi} (Надлишок)</span>`;
+        }
 
-        html += `
-          <tr class="hover:bg-slate-800/40 transition">
-            <td class="px-4 py-3 font-semibold text-slate-200">${formattedDate}</td>
-            <td class="px-4 py-3 font-bold text-slate-100 text-base">${row.weight.toFixed(1)} кг</td>
-            <td class="px-4 py-3">${deltaBadge}</td>
-            <td class="px-4 py-3">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${row.bmiClass}">
-                <span>${row.bmi} кг/м²</span>
-                <span class="opacity-80 font-normal">(${row.bmiCategory})</span>
-              </span>
-            </td>
-          </tr>
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/40 transition';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-semibold text-slate-200">${formatDateUkrainian(d)}</td>
+          <td class="py-2.5 px-3 font-black text-white">${curW} кг</td>
+          <td class="py-2.5 px-3">${diffHtml}</td>
+          <td class="py-2.5 px-3">${bmiBadge}</td>
         `;
+        tbody.appendChild(tr);
       });
-
-      tbody.innerHTML = html;
     }
 
-    window.addEventListener('DOMContentLoaded', init);
+    function formatDateUkrainian(isoDate) {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-');
+      const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+      return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
+    }
+
+    // Auto-fetch on load
+    window.addEventListener('DOMContentLoaded', fetchSheetData);
   </script>
 </body>
 </html>
